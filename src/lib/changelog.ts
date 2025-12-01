@@ -6,6 +6,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.1.1",
+        date: "2025-12-01",
+        changes: [
+            "Fixed mobile menu closing immediately upon opening",
+            "Added page transition progress bar",
+            "Added password visibility toggle to login page",
+            "Improved Sign Out button visibility in dark mode",
+            "Added version display and changelog modal"
+        ]
+    },
+    {
         version: "0.1.0",
         date: "2025-12-01",
         changes: [
