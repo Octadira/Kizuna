@@ -53,14 +53,14 @@ export function Navbar() {
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
+                    className="fixed inset-0 bg-black/50 z-[45] md:hidden backdrop-blur-sm"
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
 
             {/* Sidebar */}
             <nav className={cn(
-                "fixed top-0 left-0 h-full w-64 border-r border-sidebar-border bg-sidebar text-sidebar-foreground p-4 flex flex-col z-50 transition-transform duration-300 ease-in-out md:translate-x-0",
+                "fixed top-0 left-0 h-full w-64 border-r border-sidebar-border bg-sidebar text-sidebar-foreground p-4 flex flex-col z-[50] transition-transform duration-300 ease-in-out md:translate-x-0",
                 isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 <div className="mb-8 px-2 flex items-center gap-2">
