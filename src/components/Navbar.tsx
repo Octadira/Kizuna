@@ -20,10 +20,8 @@ export function Navbar() {
 
     // Close mobile menu when route changes
     useEffect(() => {
-        if (isMobileMenuOpen) {
-            setIsMobileMenuOpen(false);
-        }
-    }, [pathname, isMobileMenuOpen]);
+        setIsMobileMenuOpen(false);
+    }, [pathname]);
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
