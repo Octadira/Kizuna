@@ -1,10 +1,16 @@
 -- COMPLETE SUPABASE SETUP SQL
 -- Run this script in the Supabase SQL Editor to set up the database structure and security policies.
 
+-- NOTE ABOUT AUTHENTICATION:
+-- This script assumes Supabase Auth is already active (it is by default).
+-- It references the built-in 'auth.users' table to link data to specific users.
+-- You do NOT need to create a users table manually.
+
 -- 1. Create 'servers' table
 CREATE TABLE IF NOT EXISTS servers (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     created_at TIMESTAMPTZ DEFAULT NOW(),
+    -- Links to Supabase Auth User ID
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
     name TEXT NOT NULL,
     url TEXT NOT NULL,
