@@ -6,6 +6,21 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.2.0",
+        date: "2025-12-02",
+        changes: [
+            "Added Plugin System for modular feature management",
+            "Added Workflow Templates: Save and deploy workflows across servers",
+            "Added Cross-Server Cloning: Directly copy workflows between servers",
+            "Added Private Notes for workflows",
+            "Added Workflow Backups (JSON storage + metadata)",
+            "Added Execution Details Viewer (JSON inspector)",
+            "Added Advanced Search and Filtering for workflows",
+            "Improved Webhook Helper with copy-to-clipboard",
+            "Security improvements and bug fixes"
+        ]
+    },
+    {
         version: "0.1.1",
         date: "2025-12-01",
         changes: [

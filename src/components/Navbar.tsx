@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Star, LogOut, Menu, X } from "lucide-react";
+import { LayoutGrid, Star, LogOut, Menu, X, Settings, Copy } from "lucide-react";
 import { Button } from "./ui/Button";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
@@ -31,6 +31,8 @@ export function Navbar() {
     const navItems = [
         { name: "Servers", href: "/", icon: LayoutGrid },
         { name: "Favorites", href: "/favorites", icon: Star },
+        { name: "Templates", href: "/templates", icon: Copy },
+        { name: "Settings", href: "/settings/plugins", icon: Settings },
     ];
 
     return (

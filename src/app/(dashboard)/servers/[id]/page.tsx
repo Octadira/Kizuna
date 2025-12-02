@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { decrypt } from "@/utils/encryption";
 import { getN8nWorkflows, getServerStatus, getExecutions } from "@/lib/n8n";
-import { WorkflowCard } from "@/components/WorkflowCard";
+import { WorkflowList } from "@/components/WorkflowList";
 import { Button } from "@/components/ui/Button";
 import { ArrowLeft, ExternalLink, Layers, Activity } from "lucide-react";
 import Link from "next/link";
@@ -115,17 +115,12 @@ export default async function ServerPage({ params }: PageProps) {
                             <Layers size={20} />
                             Workflows ({workflows.length})
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {workflows.map((workflow) => (
-                                <WorkflowCard
-                                    key={workflow.id}
-                                    workflow={workflow}
-                                    serverId={server.id}
-                                    serverUrl={server.url}
-                                    isFavorite={favoriteIds.has(workflow.id)}
-                                />
-                            ))}
-                        </div>
+                        <WorkflowList
+                            workflows={workflows}
+                            serverId={server.id}
+                            serverUrl={server.url}
+                            favoriteIds={favoriteIds}
+                        />
                     </div>
                 </div>
             )}

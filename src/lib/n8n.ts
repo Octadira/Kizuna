@@ -124,10 +124,11 @@ export async function toggleN8nWorkflowActive(baseUrl: string, apiKey: string, w
     }
 }
 
-export async function getExecutions(baseUrl: string, apiKey: string, limit: number = 50): Promise<any[]> {
+export async function getExecutions(baseUrl: string, apiKey: string, limit: number = 50, workflowId?: string): Promise<any[]> {
     const cleanUrl = baseUrl.replace(/\/$/, "");
     try {
-        const res = await fetch(`${cleanUrl}/api/v1/executions?limit=${limit}`, {
+        const query = `limit=${limit}${workflowId ? `&workflowId=${workflowId}` : ''}`;
+        const res = await fetch(`${cleanUrl}/api/v1/executions?${query}`, {
             headers: { 'X-N8N-API-KEY': apiKey },
             next: { revalidate: 10 }, // Cache for 10 seconds
         });
@@ -141,5 +142,48 @@ export async function getExecutions(baseUrl: string, apiKey: string, limit: numb
     } catch (error) {
         console.error("n8n Get Executions Error:", error);
         return [];
+    }
+}
+
+export async function getExecution(baseUrl: string, apiKey: string, executionId: string): Promise<any> {
+    const cleanUrl = baseUrl.replace(/\/$/, "");
+    try {
+        const res = await fetch(`${cleanUrl}/api/v1/executions/${executionId}`, {
+            headers: { 'X-N8N-API-KEY': apiKey },
+            next: { revalidate: 0 },
+        });
+
+        if (!res.ok) {
+            return null;
+        }
+
+        return await res.json();
+    } catch (error) {
+        console.error("n8n Get Execution Error:", error);
+        return null;
+    }
+}
+
+export async function createN8nWorkflow(baseUrl: string, apiKey: string, workflowData: any): Promise<any> {
+    const cleanUrl = baseUrl.replace(/\/$/, "");
+    try {
+        const res = await fetch(`${cleanUrl}/api/v1/workflows`, {
+            method: 'POST',
+            headers: {
+                'X-N8N-API-KEY': apiKey,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(workflowData),
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`Failed to create workflow: ${res.status} ${errorText}`);
+        }
+
+        return await res.json();
+    } catch (error) {
+        console.error("n8n Create Workflow Error:", error);
+        throw error;
     }
 }

@@ -2,7 +2,8 @@
 
 import { Card } from "./ui/Card";
 import { Button } from "./ui/Button";
-import { Star, ExternalLink } from "lucide-react";
+import { Star, ExternalLink, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { toggleFavorite, toggleWorkflowStatus } from "@/app/actions";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -104,16 +105,14 @@ export function WorkflowCard({ workflow, serverId, serverUrl, isFavorite: initia
                 </p>
             </div>
 
-            <a
-                href={`${serverUrl.replace(/\/$/, "")}/workflow/${workflow.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
+            <Link
+                href={`/servers/${serverId}/workflows/${workflow.id}`}
                 className="mt-auto"
             >
                 <Button variant="outline" className="w-full gap-2 group-hover:border-primary group-hover:text-primary transition-colors">
-                    Open Workflow <ExternalLink size={14} />
+                    View Details <ArrowRight size={14} />
                 </Button>
-            </a>
+            </Link>
         </Card>
     );
 }
