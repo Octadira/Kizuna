@@ -162,9 +162,23 @@ MIT
 
 ## Version History
 
-- **v1.0.0** (2025-12-03): Initial release with unified database schema
-  - Multi-server management
-  - Workflow favorites and monitoring
-  - Notes and backup system
-  - Plugin architecture
-  - Comprehensive security with RLS
+- **v0.2.1** (2025-12-04): Security and Performance Improvements
+  - Optimized Row Level Security (RLS) policies for better performance
+  - Fixed duplicate policy warnings in database schema
+  - Enhanced database setup script
+
+- **v0.2.0** (2025-12-02): Plugin System & Advanced Features
+  - Added Plugin System for modular feature management
+  - Added Workflow Templates & Cross-Server Cloning
+  - Added Private Notes & Workflow Backups
+  - Added Execution Details Viewer & Advanced Search
+
+- **v0.1.1** (2025-12-01): UI/UX Improvements
+  - Fixed mobile menu & added page transitions
+  - Added password visibility toggle & improved dark mode
+  - Added version display and changelog modal
+
+- **v0.1.0** (2025-12-01): Initial Release
+  - Multi-server management & Workflow monitoring
+  - Favorites system & Dark/Light mode support
+  - Secure authentication with Supabase

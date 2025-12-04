@@ -52,43 +52,44 @@ DROP POLICY IF EXISTS "Users can delete their own servers" ON servers;
 CREATE POLICY "Users can view their own servers"
 ON servers FOR SELECT
 TO authenticated
-USING (auth.uid() = user_id);
+USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can insert their own servers"
 ON servers FOR INSERT
 TO authenticated
-WITH CHECK (auth.uid() = user_id);
+WITH CHECK ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own servers"
 ON servers FOR UPDATE
 TO authenticated
-USING (auth.uid() = user_id);
+USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can delete their own servers"
 ON servers FOR DELETE
 TO authenticated
-USING (auth.uid() = user_id);
+USING ((select auth.uid()) = user_id);
 
 -- 1.5 Create Security Policies for 'favorites'
 -- Drop existing policies
 DROP POLICY IF EXISTS "Users can view their own favorites" ON favorites;
 DROP POLICY IF EXISTS "Users can insert their own favorites" ON favorites;
 DROP POLICY IF EXISTS "Users can delete their own favorites" ON favorites;
+DROP POLICY IF EXISTS "Users can manage their favorites" ON favorites;
 
 CREATE POLICY "Users can view their own favorites"
 ON favorites FOR SELECT
 TO authenticated
-USING (auth.uid() = user_id);
+USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can insert their own favorites"
 ON favorites FOR INSERT
 TO authenticated
-WITH CHECK (auth.uid() = user_id);
+WITH CHECK ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can delete their own favorites"
 ON favorites FOR DELETE
 TO authenticated
-USING (auth.uid() = user_id);
+USING ((select auth.uid()) = user_id);
 
 -- 1.6 Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_servers_user_id ON servers(user_id);
@@ -118,8 +119,8 @@ CREATE POLICY "Users can manage their own notes"
 ON workflow_notes
 FOR ALL
 TO authenticated
-USING (auth.uid() = user_id)
-WITH CHECK (auth.uid() = user_id);
+USING ((select auth.uid()) = user_id)
+WITH CHECK ((select auth.uid()) = user_id);
 
 -- 2.4 Create 'workflow_backups' table (metadata for storage)
 CREATE TABLE IF NOT EXISTS workflow_backups (
@@ -141,8 +142,8 @@ CREATE POLICY "Users can manage their own backups"
 ON workflow_backups
 FOR ALL
 TO authenticated
-USING (auth.uid() = user_id)
-WITH CHECK (auth.uid() = user_id);
+USING ((select auth.uid()) = user_id)
+WITH CHECK ((select auth.uid()) = user_id);
 
 -- 2.7 Storage Bucket Setup
 -- Create a new bucket called 'backups'
@@ -154,17 +155,17 @@ ON CONFLICT (id) DO NOTHING;
 CREATE POLICY "Users can upload their own backups"
 ON storage.objects FOR INSERT
 TO authenticated
-WITH CHECK (bucket_id = 'backups' AND auth.uid() = owner);
+WITH CHECK (bucket_id = 'backups' AND (select auth.uid()) = owner);
 
 CREATE POLICY "Users can view their own backups"
 ON storage.objects FOR SELECT
 TO authenticated
-USING (bucket_id = 'backups' AND auth.uid() = owner);
+USING (bucket_id = 'backups' AND (select auth.uid()) = owner);
 
 CREATE POLICY "Users can delete their own backups"
 ON storage.objects FOR DELETE
 TO authenticated
-USING (bucket_id = 'backups' AND auth.uid() = owner);
+USING (bucket_id = 'backups' AND (select auth.uid()) = owner);
 
 -- ----------------------------------------------------------------
 -- SECTION 3: PLUGIN SYSTEM
@@ -207,8 +208,8 @@ CREATE POLICY "Users can manage their own templates"
 ON workflow_templates
 FOR ALL
 TO authenticated
-USING (auth.uid() = user_id)
-WITH CHECK (auth.uid() = user_id);
+USING ((select auth.uid()) = user_id)
+WITH CHECK ((select auth.uid()) = user_id);
 
 -- 3.6 Enable RLS for plugins
 ALTER TABLE plugins ENABLE ROW LEVEL SECURITY;
