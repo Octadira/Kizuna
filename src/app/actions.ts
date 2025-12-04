@@ -366,3 +366,57 @@ export async function fetchFullWorkflow(serverId: string, workflowId: string) {
     const apiKey = decrypt(server.api_key);
     return await getN8nWorkflow(server.url, apiKey, workflowId);
 }
+
+export async function deleteServer(serverId: string) {
+
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        console.error("[deleteServer] Unauthorized");
+        throw new Error("Unauthorized");
+    }
+
+    // 1. Clean up Storage: Find all backups for this server
+
+    const { data: backups } = await supabase
+        .from("workflow_backups")
+        .select("storage_path")
+        .eq("server_id", serverId)
+        .eq("user_id", user.id);
+
+    if (backups && backups.length > 0) {
+
+        const paths = backups.map(b => b.storage_path);
+        const { error: storageError } = await supabase.storage
+            .from("backups")
+            .remove(paths);
+
+        if (storageError) {
+            console.error("[deleteServer] Error cleaning up backup files:", storageError);
+            // We continue with server deletion even if storage cleanup fails
+            // to avoid blocking the user, but ideally this should be logged/alerted.
+        } else {
+
+        }
+    } else {
+
+    }
+
+    // 2. Delete Server (Cascades to favorites, notes, backup metadata)
+
+    const { error } = await supabase
+        .from("servers")
+        .delete()
+        .eq("id", serverId)
+        .eq("user_id", user.id);
+
+    if (error) {
+        console.error("[deleteServer] Error deleting server:", error);
+        throw new Error("Failed to delete server");
+    }
+
+
+    revalidatePath("/");
+
+}

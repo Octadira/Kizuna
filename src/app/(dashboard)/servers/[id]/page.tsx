@@ -7,6 +7,7 @@ import { ArrowLeft, ExternalLink, Layers, Activity } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ServerAnalytics } from "@/components/ServerAnalytics";
+import { DeleteServerButton } from "@/components/DeleteServerButton";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -94,6 +95,7 @@ export default async function ServerPage({ params }: PageProps) {
                             Open n8n <ExternalLink size={16} />
                         </Button>
                     </a>
+                    <DeleteServerButton serverId={server.id} serverName={server.name} />
                 </div>
             </div>
 

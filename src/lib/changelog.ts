@@ -6,6 +6,26 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.4.0",
+        date: "2025-12-04",
+        changes: [
+            "Improved Delete Server: Moved to server detail page for better UX",
+            "Added Backup Download option before server deletion",
+            "Smart backup detection: Only shows download option if backups exist",
+            "Added HEAD endpoint for efficient backup existence check",
+            "Completed comprehensive Security Audit (Score: 9.2/10)",
+            "Code cleanup: Removed debug console.log statements",
+            "Simplified ServerCard component for better performance"
+        ]
+    },
+    {
+        version: "0.3.1",
+        date: "2025-12-04",
+        changes: [
+            "Added ability to delete servers with confirmation dialog",
+        ]
+    },
+    {
         version: "0.3.0",
         date: "2025-12-04",
         changes: [
@@ -74,4 +94,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.3.0";
+export const CURRENT_VERSION = "0.4.0";

@@ -37,12 +37,17 @@ export async function getN8nWorkflows(baseUrl: string, apiKey: string, fetchDeta
     const cleanUrl = baseUrl.replace(/\/$/, "");
 
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
         const res = await fetch(`${cleanUrl}/api/v1/workflows`, {
             headers: {
                 'X-N8N-API-KEY': apiKey,
             },
             next: { revalidate: 0 }, // Disable cache to get latest status
+            signal: controller.signal,
         });
+        clearTimeout(timeoutId);
 
         if (!res.ok) {
             throw new Error(`Failed to fetch workflows: ${res.statusText}`);
