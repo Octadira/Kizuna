@@ -11,6 +11,7 @@ import { ModeToggle } from "./mode-toggle";
 import { useState, useEffect } from "react";
 import { ChangelogModal } from "./ChangelogModal";
 import { CURRENT_VERSION } from "@/lib/changelog";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 export function Navbar() {
     const pathname = usePathname();
@@ -96,7 +97,10 @@ export function Navbar() {
                 <div className="mt-auto pt-4 border-t border-sidebar-border space-y-2">
                     <div className="flex items-center justify-between px-2">
                         <span className="text-xs font-medium text-sidebar-foreground/50">Theme</span>
-                        <ModeToggle />
+                        <div className="flex items-center gap-1">
+                            <ThemeSwitcher />
+                            <ModeToggle />
+                        </div>
                     </div>
 
                     <ChangelogModal>

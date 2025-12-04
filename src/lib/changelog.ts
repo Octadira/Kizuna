@@ -6,6 +6,15 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.2.3",
+        date: "2025-12-04",
+        changes: [
+            "Added new default 'Mint' theme",
+            "Added 'Theme Switcher' plugin to toggle between Mint and Classic themes",
+            "Updated UI with fresh colors and shadows"
+        ]
+    },
+    {
         version: "0.2.2",
         date: "2025-12-04",
         changes: [
@@ -63,4 +72,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.2.2";
+export const CURRENT_VERSION = "0.2.3";

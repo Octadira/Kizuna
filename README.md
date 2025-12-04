@@ -162,6 +162,11 @@ MIT
 
 ## Version History
 
+- **v0.2.3** (2025-12-04): Visual Refresh & Theme Switcher
+  - Added new default 'Mint' theme
+  - Added 'Theme Switcher' plugin to toggle between Mint and Classic themes
+  - Updated UI with fresh colors and shadows
+
 - **v0.2.2** (2025-12-04): Performance Optimizations
   - Optimized Workflow Page load time by lazy-loading full workflow JSON
   - Improved Server Page performance by disabling detailed workflow fetching

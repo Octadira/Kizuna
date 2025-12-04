@@ -186,7 +186,8 @@ CREATE TABLE IF NOT EXISTS plugins (
 INSERT INTO plugins (key, name, description, enabled)
 VALUES 
     ('workflow_templates', 'Workflow Templates', 'Save workflows as templates and reuse them across servers.', FALSE),
-    ('cross_server_cloning', 'Cross-Server Cloning', 'Directly clone workflows from one server to another.', FALSE)
+    ('cross_server_cloning', 'Cross-Server Cloning', 'Directly clone workflows from one server to another.', FALSE),
+    ('theme_switcher', 'Theme Switcher', 'Enable the ability to switch between different visual themes.', FALSE)
 ON CONFLICT (key) DO NOTHING;
 
 -- 3.3 Create 'workflow_templates' table (for the Templates plugin)
