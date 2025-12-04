@@ -1,196 +1,107 @@
-# n8Kizuna - n8n Dashboard
+# n8Kizuna - The Ultimate n8n Command Center
 
-n8Kizuna is a modern, responsive web interface for managing and monitoring your n8n servers and workflows.
+![n8Kizuna Dashboard](pbl/hero.png)
 
-## Features
+## Unlock the Full Potential of Your Automation Infrastructure
 
-- **Multi-Server Management**: Add and manage multiple n8n instances from a single dashboard.
-- **Workflow Monitoring**: View active/inactive workflows, execution statistics, and success rates.
-- **Favorites**: Pin your most used workflows for quick access.
-- **Workflow Notes**: Add personal notes to your workflows for better organization.
-- **Workflow Backups**: Save and restore workflow versions with Supabase Storage.
-- **Plugin System**: Extend functionality with features like Workflow Templates and Cross-Server Cloning.
-- **Secure**: Built with Supabase Authentication and Row Level Security (RLS) to ensure your data is private.
-- **Responsive Design**: Fully optimized for desktop and mobile devices.
-- **Dark/Light Mode**: Choose your preferred theme.
+**n8Kizuna** is the centralized control plane for your n8n ecosystem. Designed for power users and DevOps teams, it bridges the gap between scattered n8n instances, offering a unified interface for monitoring, management, and secure orchestration.
 
-## Tech Stack
+Stop juggling multiple tabs and credentials. With n8Kizuna, you gain a "single pane of glass" visibility into your entire automation landscape, ensuring your workflows are always running, secure, and optimized.
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
-- **Database & Auth**: [Supabase](https://supabase.com/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Icons**: [Lucide React](https://lucide.dev/)
+---
+
+## Key Features
+
+### 🚀 Centralized Management
+*   **Multi-Server Dashboard:** Monitor the health and status of unlimited n8n instances from one view.
+*   **Real-Time Analytics:** Track active workflows, execution counts, and server uptime instantly.
+
+### ⚡ Seamless Orchestration
+*   **Cross-Server Cloning:** Copy workflows directly from one server to another with a single click.
+*   **Workflow Templates:** Save your best workflows as templates and deploy them anywhere.
+*   **Smart Backups:** Automatically backup workflows with metadata and version history.
+
+### 🛡️ Enterprise-Grade Security
+*   **Role-Based Access Control (RBAC):** Granular permissions for plugin management and server access.
+*   **Secure Credential Storage:** Industry-standard encryption for all API keys and sensitive data.
+*   **SSRF Protection:** Built-in safeguards against Server-Side Request Forgery attacks.
+
+### 🎨 Personalized Experience
+*   **Plugin System:** Extend functionality with modular plugins.
+*   **Theme Engine:** Choose your vibe with built-in themes (Mint, Classic, Ocean) and Dark/Light mode support.
+*   **Private Notes:** Attach context and documentation directly to your workflows.
+
+---
 
 ## Getting Started
 
 ### Prerequisites
-
-- Node.js 18+
-- A Supabase project
+*   Node.js 18+
+*   Supabase project (or local instance)
 
 ### Installation
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/yourusername/n8kizuna.git
-   cd n8kizuna
-   ```
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/yourusername/n8kizuna.git
+    cd n8kizuna
+    ```
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-3. **Set up environment variables:**
-   
-   Create a `.env.local` file in the root directory and add your Supabase credentials:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
+3.  **Environment Setup:**
+    Create a `.env.local` file with your Supabase credentials:
+    ```env
+    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+    ```
 
-4. **Set up the database:**
-   
-   Run the unified setup script in your Supabase SQL Editor:
-   
-   a. Log in to your [Supabase Dashboard](https://app.supabase.com)
-   
-   b. Navigate to your project
-   
-   c. Go to **SQL Editor** in the left sidebar
-   
-   d. Click **New Query**
-   
-   e. Copy the entire contents of `setup.sql` and paste it into the editor
-   
-   f. Click **Run** to execute the script
-   
-   **What's included in the setup:**
-   - **6 Tables**: servers, favorites, workflow_notes, workflow_backups, plugins, workflow_templates
-   - **15 Security Policies**: Comprehensive Row Level Security for all tables
-   - **3 Performance Indexes**: Optimized for user and server queries
-   - **Storage Bucket**: Private bucket for workflow backups
-   - **Default Plugins**: Workflow Templates and Cross-Server Cloning (disabled by default)
+4.  **Run the application:**
+    ```bash
+    npm run dev
+    ```
+    Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-5. **Verify the database setup:**
-   
-   After running the script, verify that everything was created:
-   - Go to **Table Editor** - you should see all 6 tables
-   - Go to **Authentication** > **Policies** - you should see RLS policies for each table
-   - Go to **Storage** - you should see a 'backups' bucket
+---
 
-6. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
+## Changelog
 
-   Open [http://localhost:3000](http://localhost:3000) with your browser.
+### v0.3.0 (2025-12-04)
+*   **New Feature:** Added default "Mint" theme.
+*   **New Feature:** "Theme Switcher" plugin (Mint, Classic, Ocean).
+*   **Security:** Implemented Role-Based Access Control (RBAC) for plugin management.
+*   **Security:** Added SSRF protection for server URL validation.
+*   **UI:** Updated UI with fresh colors and shadows.
 
-## Database Schema
+### v0.2.2 (2025-12-04)
+*   **Performance:** Optimized Workflow Page load time by lazy-loading full workflow JSON.
+*   **Performance:** Improved Server Page performance by disabling detailed workflow fetching.
+*   **Performance:** Reduced initial payload size for workflow details.
 
-The application uses the following database structure:
+### v0.2.1 (2025-12-04)
+*   **Performance:** Optimized Row Level Security (RLS) policies.
+*   **Fix:** Resolved duplicate policy warnings in database schema.
+*   **Improvement:** Enhanced database setup script.
 
-### Core Tables
-- **servers**: Stores n8n server configurations (name, URL, API key)
-- **favorites**: User's favorite workflows for quick access
+### v0.2.0 (2025-12-02)
+*   **New Feature:** Plugin System for modular feature management.
+*   **New Feature:** Workflow Templates (Save & Deploy).
+*   **New Feature:** Cross-Server Cloning.
+*   **New Feature:** Private Notes for workflows.
+*   **New Feature:** Workflow Backups (JSON + Metadata).
+*   **New Feature:** Execution Details Viewer (JSON Inspector).
+*   **New Feature:** Advanced Search and Filtering.
+*   **Improvement:** Webhook Helper with copy-to-clipboard.
 
-### Extended Features
-- **workflow_notes**: Personal notes attached to specific workflows
-- **workflow_backups**: Metadata for workflow backups stored in Supabase Storage
+### v0.1.1 (2025-12-01)
+*   **Fix:** Mobile menu closing behavior.
+*   **UI:** Added page transition progress bar.
+*   **UI:** Password visibility toggle on login.
+*   **UI:** Improved Sign Out button visibility.
+*   **UI:** Added version display and changelog modal.
 
-### Plugin System
-- **plugins**: Feature management system (toggleable features)
-- **workflow_templates**: Reusable workflow templates that can be deployed across servers
-
-All tables have Row Level Security (RLS) enabled, ensuring users can only access their own data.
-
-## Deployment
-
-### Deploy on Vercel
-
-The easiest way to deploy n8Kizuna is to use the [Vercel Platform](https://vercel.com/new).
-
-1. Push your code to a GitHub repository.
-2. Import the project into Vercel.
-3. Add the following Environment Variables in the Vercel project settings:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Deploy!
-
-## Security
-
-- **API Keys**: n8n API keys are encrypted before being stored in the database.
-- **Row Level Security (RLS)**: All tables use RLS policies to ensure users can only access their own data.
-- **Storage Access**: Backup files are private and only accessible by the owner.
-- **Authentication**: Built on Supabase Auth with secure session management.
-
-## Troubleshooting
-
-### Database Setup Issues
-
-**Storage Policies Error:**
-If you get an error with storage policies, you may need to create the storage bucket manually:
-1. Go to **Storage** in Supabase Dashboard
-2. Create a new bucket called `backups`
-3. Set it to **Private**
-4. Re-run the storage policy section of the setup script
-
-**Policy Conflicts:**
-The setup script includes `DROP POLICY IF EXISTS` statements that will clean up old policies automatically. The script is idempotent and safe to run multiple times.
-
-## Project Structure
-
-```
-n8Kizuna/
-├── src/
-│   ├── app/              # Next.js App Router pages
-│   ├── components/       # React components
-│   ├── lib/             # Utility functions and Supabase client
-│   └── types/           # TypeScript type definitions
-├── public/              # Static assets
-├── setup.sql            # Unified database setup script
-└── README.md            # This file
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-MIT
-
-## Version History
-
-- **v0.3.0** (2025-12-04): Visual Refresh & Security Hardening
-  - Added new default 'Mint' theme
-  - Added 'Theme Switcher' plugin (Mint, Classic, Ocean)
-  - Implemented Role-Based Access Control (RBAC) for plugins
-  - Added SSRF protection for server URLs
-  - Updated UI with fresh colors and shadows
-
-- **v0.2.2** (2025-12-04): Performance Optimizations
-  - Optimized Workflow Page load time by lazy-loading full workflow JSON
-  - Improved Server Page performance by disabling detailed workflow fetching
-  - Reduced initial payload size for workflow details
-
-- **v0.2.1** (2025-12-04): Security and Performance Improvements
-  - Optimized Row Level Security (RLS) policies for better performance
-  - Fixed duplicate policy warnings in database schema
-  - Enhanced database setup script
-
-- **v0.2.0** (2025-12-02): Plugin System & Advanced Features
-  - Added Plugin System for modular feature management
-  - Added Workflow Templates & Cross-Server Cloning
-  - Added Private Notes & Workflow Backups
-  - Added Execution Details Viewer & Advanced Search
-
-- **v0.1.1** (2025-12-01): UI/UX Improvements
-  - Fixed mobile menu & added page transitions
-  - Added password visibility toggle & improved dark mode
-  - Added version display and changelog modal
-
-- **v0.1.0** (2025-12-01): Initial Release
-  - Multi-server management & Workflow monitoring
-  - Favorites system & Dark/Light mode support
-  - Secure authentication with Supabase
+### v0.1.0 (2025-12-01)
+*   **Initial Release:** Multi-server management, monitoring, favorites system, dark/light mode, and secure authentication.
