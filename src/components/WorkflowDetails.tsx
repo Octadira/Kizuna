@@ -5,7 +5,7 @@ import { Button } from "./ui/Button";
 import { Card } from "./ui/Card";
 import { Switch } from "./ui/Switch";
 import { Download, Activity, FileJson, Info, ExternalLink, Webhook, Copy, StickyNote, Loader2, Trash2, Save } from "lucide-react";
-import { toggleWorkflowStatus, saveWorkflowNote, saveWorkflowBackup, deleteBackup, fetchExecutionDetails, saveWorkflowTemplate, deployWorkflowToServer } from "@/app/actions";
+import { toggleWorkflowStatus, saveWorkflowNote, saveWorkflowBackup, deleteBackup, fetchExecutionDetails, saveWorkflowTemplate, deployWorkflowToServer, fetchFullWorkflow } from "@/app/actions";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./ui/Dialog";
 import { Input } from "./ui/Input";
@@ -25,6 +25,10 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
     const [activeTab, setActiveTab] = useState<"overview" | "executions" | "json" | "backups">("overview");
     const [isActive, setIsActive] = useState(workflow.active);
     const [statusLoading, setStatusLoading] = useState(false);
+
+    // Full Workflow Data (fetched on demand)
+    const [fullWorkflow, setFullWorkflow] = useState<any>(null);
+    const [loadingFullWorkflow, setLoadingFullWorkflow] = useState(false);
 
     // Notes State
     const [note, setNote] = useState(initialNote);
@@ -49,6 +53,23 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
     const [targetServerId, setTargetServerId] = useState("");
     const [cloning, setCloning] = useState(false);
 
+    const ensureFullWorkflow = async () => {
+        if (fullWorkflow) return fullWorkflow;
+
+        setLoadingFullWorkflow(true);
+        try {
+            const data = await fetchFullWorkflow(serverId, workflow.id);
+            setFullWorkflow(data);
+            return data;
+        } catch (error) {
+            console.error("Failed to fetch full workflow", error);
+            alert("Failed to load full workflow data. Please try again.");
+            return null;
+        } finally {
+            setLoadingFullWorkflow(false);
+        }
+    };
+
     const handleViewExecution = async (executionId: string) => {
         setExecutionLoading(true);
         setExecutionDialogOpen(true);
@@ -65,7 +86,9 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
     const handleSaveTemplate = async () => {
         setSavingTemplate(true);
         try {
-            await saveWorkflowTemplate(templateName, templateDesc, workflow);
+            const wf = await ensureFullWorkflow();
+            if (!wf) return;
+            await saveWorkflowTemplate(templateName, templateDesc, wf);
             setTemplateDialogOpen(false);
             alert("Template saved successfully!");
         } catch (error) {
@@ -80,7 +103,9 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
         if (!targetServerId) return;
         setCloning(true);
         try {
-            await deployWorkflowToServer(targetServerId, workflow);
+            const wf = await ensureFullWorkflow();
+            if (!wf) return;
+            await deployWorkflowToServer(targetServerId, wf);
             setCloneDialogOpen(false);
             alert("Workflow cloned successfully!");
         } catch (error) {
@@ -105,7 +130,9 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
     const handleCreateBackup = async () => {
         setBackingUp(true);
         try {
-            await saveWorkflowBackup(serverId, workflow.id, workflow.name, workflow);
+            const wf = await ensureFullWorkflow();
+            if (!wf) return;
+            await saveWorkflowBackup(serverId, workflow.id, workflow.name, wf);
         } catch (error) {
             console.error("Failed to create backup", error);
         } finally {
@@ -122,11 +149,13 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
         }
     };
 
-    const handleDownload = () => {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(workflow, null, 2));
+    const handleDownload = async () => {
+        const wf = await ensureFullWorkflow();
+        if (!wf) return;
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(wf, null, 2));
         const downloadAnchorNode = document.createElement('a');
         downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", `${workflow.name}.json`);
+        downloadAnchorNode.setAttribute("download", `${wf.name}.json`);
         document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
@@ -264,12 +293,12 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
                             Clone to Server
                         </Button>
                     )}
-                    <Button variant="outline" onClick={handleCreateBackup} disabled={backingUp} className="gap-2">
-                        {backingUp ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                    <Button variant="outline" onClick={handleCreateBackup} disabled={backingUp || loadingFullWorkflow} className="gap-2">
+                        {(backingUp || loadingFullWorkflow) ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                         Save Backup
                     </Button>
-                    <Button variant="outline" onClick={handleDownload} className="gap-2">
-                        <Download size={16} />
+                    <Button variant="outline" onClick={handleDownload} disabled={loadingFullWorkflow} className="gap-2">
+                        {loadingFullWorkflow ? <Loader2 className="animate-spin" size={16} /> : <Download size={16} />}
                         Download JSON
                     </Button>
                     <a href={`${serverUrl.replace(/\/$/, "")}/workflow/${workflow.id}`} target="_blank" rel="noopener noreferrer">
@@ -524,9 +553,19 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
                                 <Download size={14} className="mr-2" /> Download
                             </Button>
                         </div>
-                        <pre className="p-4 overflow-auto max-h-[600px] text-xs font-mono text-foreground">
-                            {JSON.stringify(workflow, null, 2)}
-                        </pre>
+                        <div className="p-4 overflow-auto max-h-[600px] text-xs font-mono text-foreground">
+                            {fullWorkflow ? (
+                                <pre>{JSON.stringify(fullWorkflow, null, 2)}</pre>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-12 gap-4">
+                                    <p className="text-muted-foreground">Full workflow JSON is not loaded.</p>
+                                    <Button onClick={ensureFullWorkflow} disabled={loadingFullWorkflow}>
+                                        {loadingFullWorkflow && <Loader2 className="animate-spin mr-2" size={14} />}
+                                        Load JSON
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
                     </Card>
                 )}
             </div>

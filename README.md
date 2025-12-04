@@ -162,6 +162,11 @@ MIT
 
 ## Version History
 
+- **v0.2.2** (2025-12-04): Performance Optimizations
+  - Optimized Workflow Page load time by lazy-loading full workflow JSON
+  - Improved Server Page performance by disabling detailed workflow fetching
+  - Reduced initial payload size for workflow details
+
 - **v0.2.1** (2025-12-04): Security and Performance Improvements
   - Optimized Row Level Security (RLS) policies for better performance
   - Fixed duplicate policy warnings in database schema

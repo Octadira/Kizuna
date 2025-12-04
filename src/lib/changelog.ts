@@ -6,6 +6,15 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.2.2",
+        date: "2025-12-04",
+        changes: [
+            "Optimized Workflow Page load time by lazy-loading full workflow JSON",
+            "Improved Server Page performance by disabling detailed workflow fetching",
+            "Reduced initial payload size for workflow details"
+        ]
+    },
+    {
         version: "0.2.1",
         date: "2025-12-04",
         changes: [
@@ -54,4 +63,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.2.1";
+export const CURRENT_VERSION = "0.2.2";

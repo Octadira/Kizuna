@@ -45,7 +45,7 @@ export default async function ServerPage({ params }: PageProps) {
     try {
         const apiKey = decrypt(server.api_key);
         const [fetchedWorkflows, fetchedExecutions] = await Promise.all([
-            getN8nWorkflows(server.url, apiKey, true),
+            getN8nWorkflows(server.url, apiKey, false),
             getExecutions(server.url, apiKey)
         ]);
         workflows = fetchedWorkflows;

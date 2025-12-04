@@ -311,3 +311,23 @@ export async function updateServer(formData: FormData) {
     revalidatePath(`/servers/${id}`);
     redirect(`/servers/${id}`);
 }
+
+import { getN8nWorkflow } from "@/lib/n8n";
+
+export async function fetchFullWorkflow(serverId: string, workflowId: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    const { data: server } = await supabase
+        .from("servers")
+        .select("url, api_key")
+        .eq("id", serverId)
+        .single();
+
+    if (!server) throw new Error("Server not found");
+
+    const apiKey = decrypt(server.api_key);
+    return await getN8nWorkflow(server.url, apiKey, workflowId);
+}

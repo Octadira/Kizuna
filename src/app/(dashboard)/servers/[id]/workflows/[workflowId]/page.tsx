@@ -76,6 +76,15 @@ export default async function WorkflowPage({ params }: PageProps) {
         );
     }
 
+    // Create a lightweight version of the workflow for the client component
+    // This prevents sending the huge JSON payload (nodes, connections) in the initial HTML
+    const lightweightWorkflow = {
+        ...workflow,
+        nodes: workflow.nodes.filter((n: any) => n.type === "n8n-nodes-base.webhook"), // Only keep webhook nodes for the helper
+        connections: {}, // Remove connections
+        // We keep metadata like id, name, active, tags, createdAt, updatedAt, description
+    };
+
     return (
         <div className="space-y-8">
             <div>
@@ -90,7 +99,7 @@ export default async function WorkflowPage({ params }: PageProps) {
             </div>
 
             <WorkflowDetails
-                workflow={workflow}
+                workflow={lightweightWorkflow}
                 executions={executions}
                 serverId={server.id}
                 serverUrl={server.url}
