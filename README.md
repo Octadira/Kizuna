@@ -79,7 +79,7 @@ Stop juggling multiple tabs and credentials. With n8Kizuna, you gain a "single p
 ## Changelog
 
 ### v0.4.0 (2025-12-04)
-*   **New Feature:** Improved Delete Server - moved to server detail page for better UX.
+*   **New Feature:** Delete Server - Added backup download option before deletion.
 *   **New Feature:** Backup Download option before server deletion.
 *   **New Feature:** Smart backup detection (only shows option if backups exist).
 *   **Security:** Completed comprehensive Security Audit (Score: 9.2/10).

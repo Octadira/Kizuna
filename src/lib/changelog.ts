@@ -9,8 +9,7 @@ export const changelog: ChangelogEntry[] = [
         version: "0.4.0",
         date: "2025-12-04",
         changes: [
-            "Improved Delete Server: Moved to server detail page for better UX",
-            "Added Backup Download option before server deletion",
+            "Delete Server: Added backup download option before deletion",
             "Smart backup detection: Only shows download option if backups exist",
             "Added HEAD endpoint for efficient backup existence check",
             "Completed comprehensive Security Audit (Score: 9.2/10)",
