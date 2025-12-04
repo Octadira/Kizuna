@@ -220,12 +220,55 @@ ON plugins FOR SELECT
 TO authenticated
 USING (true);
 
--- Allow users to toggle plugins (in a real app, this might be admin-only)
-CREATE POLICY "Authenticated users can update plugins"
+-- Allow users to toggle plugins (deprecated - see Section 4 for RBAC)
+-- Policy moved to Section 4
+
+-- ----------------------------------------------------------------
+-- SECTION 4: ROLE-BASED ACCESS CONTROL (RBAC)
+-- ----------------------------------------------------------------
+
+-- 4.1 Create 'user_roles' table
+CREATE TABLE IF NOT EXISTS user_roles (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    role TEXT NOT NULL DEFAULT 'user', -- 'admin' or 'user'
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(user_id)
+);
+
+-- 4.2 Enable RLS for user_roles
+ALTER TABLE user_roles ENABLE ROW LEVEL SECURITY;
+
+-- 4.3 Policies for user_roles
+-- Users can read their own role
+CREATE POLICY "Users can read their own role"
+ON user_roles FOR SELECT
+TO authenticated
+USING ((select auth.uid()) = user_id);
+
+-- Only admins (or system) can update roles - for now we'll leave it restricted
+-- In a real app, you'd have an admin panel or SQL migration to set admins.
+
+-- 4.4 Update Plugins Policy to restrict updates to Admins
+DROP POLICY IF EXISTS "Authenticated users can update plugins" ON plugins;
+
+CREATE POLICY "Admins can update plugins"
 ON plugins FOR UPDATE
 TO authenticated
-USING (true)
-WITH CHECK (true);
+USING (
+    EXISTS (
+        SELECT 1 FROM user_roles 
+        WHERE user_id = (select auth.uid()) 
+        AND role = 'admin'
+    )
+)
+WITH CHECK (
+    EXISTS (
+        SELECT 1 FROM user_roles 
+        WHERE user_id = (select auth.uid()) 
+        AND role = 'admin'
+    )
+);
 
 -- ----------------------------------------------------------------
 -- SETUP COMPLETE

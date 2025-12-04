@@ -3,7 +3,11 @@
 import { createClient } from "@/utils/supabase/server";
 import { encrypt } from "@/utils/encryption";
 import { revalidatePath } from "next/cache";
+import { decrypt } from "@/utils/encryption";
+import { getExecution, getN8nWorkflow } from "@/lib/n8n";
 import { redirect } from "next/navigation";
+
+import { validateServerUrl } from "@/lib/security";
 
 export async function addServer(formData: FormData) {
     const supabase = await createClient();
@@ -18,6 +22,9 @@ export async function addServer(formData: FormData) {
     if (!user) {
         throw new Error("Unauthorized");
     }
+
+    // SSRF Protection: Validate URL
+    await validateServerUrl(url);
 
     // Encrypt the API Key
     const encryptedKey = encrypt(apiKey);
@@ -67,8 +74,7 @@ export async function toggleFavorite(serverId: string, workflowId: string, workf
     revalidatePath("/favorites");
 }
 
-import { decrypt } from "@/utils/encryption";
-import { toggleN8nWorkflowActive } from "@/lib/n8n";
+import { toggleN8nWorkflowActive, createN8nWorkflow } from "@/lib/n8n";
 
 export async function toggleWorkflowStatus(serverId: string, workflowId: string, isActive: boolean) {
     const supabase = await createClient();
@@ -174,40 +180,6 @@ export async function deleteBackup(backupId: string, storagePath: string, server
     revalidatePath(`/servers/${serverId}/workflows/${workflowId}`);
 }
 
-import { getExecution } from "@/lib/n8n";
-
-export async function fetchExecutionDetails(serverId: string, executionId: string) {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) throw new Error("Unauthorized");
-
-    const { data: server } = await supabase
-        .from("servers")
-        .select("url, api_key")
-        .eq("id", serverId)
-        .single();
-
-    if (!server) throw new Error("Server not found");
-
-    const apiKey = decrypt(server.api_key);
-    return await getExecution(server.url, apiKey, executionId);
-}
-
-// --- Plugin System Actions ---
-
-export async function getPlugins() {
-    const supabase = await createClient();
-    const { data } = await supabase.from("plugins").select("*").order("name");
-    return data || [];
-}
-
-export async function togglePlugin(pluginId: string, enabled: boolean) {
-    const supabase = await createClient();
-    await supabase.from("plugins").update({ enabled }).eq("id", pluginId);
-    revalidatePath("/settings/plugins");
-}
-
 // --- Workflow Template Actions ---
 
 export async function saveWorkflowTemplate(name: string, description: string, workflowData: any) {
@@ -241,8 +213,6 @@ export async function getWorkflowTemplates() {
 
 // --- Cross-Server Actions ---
 
-import { createN8nWorkflow } from "@/lib/n8n";
-
 export async function deployWorkflowToServer(targetServerId: string, workflowData: any) {
     const supabase = await createClient();
 
@@ -273,6 +243,52 @@ export async function deployWorkflowToServer(targetServerId: string, workflowDat
     return await createN8nWorkflow(server.url, apiKey, newWorkflowData);
 }
 
+// --- Plugin System Actions ---
+
+export async function getPlugins() {
+    const supabase = await createClient();
+    const { data } = await supabase.from("plugins").select("*").order("name");
+    return data || [];
+}
+
+export async function togglePlugin(pluginId: string, enabled: boolean) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    // Authorization Check: Only admins can toggle plugins
+    // We check the 'user_roles' table. If it doesn't exist yet, we fallback to allowing it (for backward compatibility during migration)
+    // BUT for security, we should enforce it.
+    // Assuming the user has run the migration script.
+
+    const { data: roleData, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .single();
+
+    // If table doesn't exist or user has no role, we default to 'user' (deny access)
+    // UNLESS it's the very first setup where maybe we want to allow it? 
+    // For strict security as requested: Deny if not admin.
+
+    const isAdmin = roleData?.role === 'admin';
+
+    if (!isAdmin) {
+        // Fallback: If user_roles table doesn't exist, Supabase might return an error.
+        // In a strict security audit fix, we must fail closed.
+        // However, to avoid locking the user out if they haven't run the SQL yet, 
+        // we might want to warn. But the prompt asks to FIX the vulnerability.
+        // So we enforce admin check.
+        throw new Error("Forbidden: Only administrators can manage plugins.");
+    }
+
+    await supabase.from("plugins").update({ enabled }).eq("id", pluginId);
+    revalidatePath("/settings/plugins");
+}
+
+// ... (existing code) ...
+
 export async function updateServer(formData: FormData) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -284,6 +300,9 @@ export async function updateServer(formData: FormData) {
     const url = formData.get("url") as string;
     const apiKey = formData.get("apiKey") as string;
     const description = formData.get("description") as string;
+
+    // SSRF Protection: Validate URL
+    await validateServerUrl(url);
 
     const updates: any = {
         name,
@@ -312,7 +331,23 @@ export async function updateServer(formData: FormData) {
     redirect(`/servers/${id}`);
 }
 
-import { getN8nWorkflow } from "@/lib/n8n";
+export async function fetchExecutionDetails(serverId: string, executionId: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    const { data: server } = await supabase
+        .from("servers")
+        .select("url, api_key")
+        .eq("id", serverId)
+        .single();
+
+    if (!server) throw new Error("Server not found");
+
+    const apiKey = decrypt(server.api_key);
+    return await getExecution(server.url, apiKey, executionId);
+}
 
 export async function fetchFullWorkflow(serverId: string, workflowId: string) {
     const supabase = await createClient();

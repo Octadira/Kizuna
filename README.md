@@ -162,9 +162,11 @@ MIT
 
 ## Version History
 
-- **v0.2.3** (2025-12-04): Visual Refresh & Theme Switcher
+- **v0.3.0** (2025-12-04): Visual Refresh & Security Hardening
   - Added new default 'Mint' theme
-  - Added 'Theme Switcher' plugin to toggle between Mint and Classic themes
+  - Added 'Theme Switcher' plugin (Mint, Classic, Ocean)
+  - Implemented Role-Based Access Control (RBAC) for plugins
+  - Added SSRF protection for server URLs
   - Updated UI with fresh colors and shadows
 
 - **v0.2.2** (2025-12-04): Performance Optimizations
