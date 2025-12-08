@@ -1,6 +1,6 @@
 # n8Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.5.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.1-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black)
@@ -78,6 +78,10 @@ Stop juggling multiple tabs and credentials. With n8Kizuna, you gain a "single p
 ---
 
 ## Changelog
+
+### v0.5.1 (2025-12-08)
+*   **Security:** Critical update to Next.js v16.0.7 (Patched React2Shell / CVE-2025-55182).
+*   **Maintenance:** Dependency security updates.
 
 ### v0.5.0 (2025-12-08)
 *   **New Feature:** n8n version detection on server detail page.

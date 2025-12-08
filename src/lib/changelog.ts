@@ -6,6 +6,14 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.5.1",
+        date: "2025-12-08",
+        changes: [
+            "CRITICAL SECURITY FIX: Updated Next.js to v16.0.7 to patch React2Shell (CVE-2025-55182)",
+            "Dependency updates for security compliance"
+        ]
+    },
+    {
         version: "0.5.0",
         date: "2025-12-08",
         changes: [
@@ -104,4 +112,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.5.0";
+export const CURRENT_VERSION = "0.5.1";
