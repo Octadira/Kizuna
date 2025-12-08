@@ -49,7 +49,7 @@ export default function LoginPage() {
                     </div>
                     <h1 className="text-2xl font-bold text-foreground">Welcome to n8Kizuna</h1>
                     <p className="text-muted-foreground mt-2 text-center">
-                        Sign in to manage your workflows
+                        One Kizuna. All your automation.
                     </p>
                 </div>
 

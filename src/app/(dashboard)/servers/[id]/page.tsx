@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { decrypt } from "@/utils/encryption";
-import { getN8nWorkflows, getServerStatus, getExecutions } from "@/lib/n8n";
+import { getN8nWorkflows, getExecutions, getN8nVersionInfo } from "@/lib/n8n";
 import { WorkflowList } from "@/components/WorkflowList";
 import { Button } from "@/components/ui/Button";
 import { ArrowLeft, ExternalLink, Layers, Activity } from "lucide-react";
@@ -38,19 +38,22 @@ export default async function ServerPage({ params }: PageProps) {
 
     const favoriteIds = new Set(favorites?.map(f => f.workflow_id));
 
-    // 3. Fetch Workflows from n8n
+    // 3. Fetch Workflows and Version from n8n
     let workflows: any[] = [];
     let executions: any[] = [];
+    let versionInfo: any = {};
     let error = null;
 
     try {
         const apiKey = decrypt(server.api_key);
-        const [fetchedWorkflows, fetchedExecutions] = await Promise.all([
+        const [fetchedWorkflows, fetchedExecutions, fetchedVersionInfo] = await Promise.all([
             getN8nWorkflows(server.url, apiKey, false),
-            getExecutions(server.url, apiKey)
+            getExecutions(server.url, apiKey),
+            getN8nVersionInfo(server.url, apiKey)
         ]);
         workflows = fetchedWorkflows;
         executions = fetchedExecutions;
+        versionInfo = fetchedVersionInfo;
     } catch (e: any) {
         error = e.message;
     }
@@ -74,6 +77,18 @@ export default async function ServerPage({ params }: PageProps) {
                             <div className={`h-2 w-2 rounded-full ${!error ? "bg-green-500" : "bg-red-500"}`} />
                             {!error ? "Online" : "Offline"}
                         </div>
+                        {versionInfo?.version && (
+                            <div className="flex items-center gap-2">
+                                <span className="bg-muted px-2 py-0.5 rounded text-xs font-mono text-muted-foreground border">
+                                    v{versionInfo.version}
+                                </span>
+                                {versionInfo.updateAvailable && (
+                                    <span className="text-amber-500 flex items-center gap-1 bg-amber-500/10 px-2 py-0.5 rounded-full font-medium text-xs border border-amber-500/20">
+                                        Update Available
+                                    </span>
+                                )}
+                            </div>
+                        )}
                     </div>
                     <div className="flex flex-wrap items-center gap-2 md:gap-4 mt-2 text-sm text-muted-foreground">
                         <p className="truncate max-w-[200px] md:max-w-none">{server.url}</p>

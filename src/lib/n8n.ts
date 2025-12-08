@@ -8,20 +8,172 @@ export interface N8nWorkflow {
     description?: string; // n8n workflows might have a description
 }
 
+export interface N8nVersionInfo {
+    version?: string;
+    updateAvailable?: boolean;
+}
+
 export interface ServerStatus {
     online: boolean;
     workflowCount: number;
     activeWorkflowCount: number;
     version?: string;
+    updateAvailable?: boolean;
+}
+
+// Helper to compare versions
+function compareVersions(v1: string, v2: string): number {
+    const parts1 = v1.replace(/[^0-9.]/g, '').split('.').map(Number);
+    const parts2 = v2.replace(/[^0-9.]/g, '').split('.').map(Number);
+    for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+        const p1 = parts1[i] || 0;
+        const p2 = parts2[i] || 0;
+        if (p1 > p2) return 1;
+        if (p1 < p2) return -1;
+    }
+    return 0;
+}
+
+let latestVersionCache: { version: string, timestamp: number } | null = null;
+
+async function getLatestN8nVersion(): Promise<string | null> {
+    if (latestVersionCache && Date.now() - latestVersionCache.timestamp < 1000 * 60 * 60) { // 1 hour cache
+        return latestVersionCache.version;
+    }
+    try {
+        const res = await fetch('https://registry.npmjs.org/n8n/latest', { next: { revalidate: 3600 } });
+        if (res.ok) {
+            const data = await res.json();
+            const version = data.version;
+            latestVersionCache = { version, timestamp: Date.now() };
+            return version;
+        }
+    } catch (e) {
+        console.error("Failed to fetch latest n8n version", e);
+    }
+    return null;
+}
+
+// Helper to fetch/extract version
+export async function getN8nVersionInfo(baseUrl: string, apiKey: string): Promise<N8nVersionInfo> {
+    const cleanUrl = baseUrl.replace(/\/$/, "");
+    let version: string | undefined;
+
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+        // 1. Try API GET for headers
+        try {
+            const res = await fetch(`${cleanUrl}/api/v1/workflows?limit=1`, {
+                method: 'GET',
+                headers: { 'X-N8N-API-KEY': apiKey },
+                next: { revalidate: 0 },
+                signal: controller.signal,
+            });
+
+            version = res.headers.get('x-n8n-version') || undefined;
+        } catch (e) {
+            // Silent fail - try next method
+        }
+
+        // 2. Try /healthz
+        if (!version) {
+            try {
+                const healthRes = await fetch(`${cleanUrl}/healthz`, {
+                    next: { revalidate: 0 },
+                    signal: controller.signal
+                });
+                version = healthRes.headers.get('x-n8n-version') || undefined;
+            } catch (e) { }
+        }
+
+        // 3. Try Root URL headers AND body parsing
+        if (!version) {
+            try {
+                const rootRes = await fetch(`${cleanUrl}/`, {
+                    next: { revalidate: 0 },
+                    signal: controller.signal
+                });
+
+                version = rootRes.headers.get('x-n8n-version') || undefined;
+
+                // If header missing, search body for n8n:config:sentry
+                if (!version && rootRes.ok) {
+                    const text = await rootRes.text();
+
+                    // Match <meta name="n8n:config:sentry" content="...">
+                    const sentryMatch = text.match(/<metaName="n8n:config:sentry"\s+content="([^"]+)"/i) ||
+                        text.match(/<meta\s+name="n8n:config:sentry"\s+content="([^"]+)"/i);
+
+                    if (sentryMatch && sentryMatch[1]) {
+                        try {
+                            const decoded = atob(sentryMatch[1]);
+                            const config = JSON.parse(decoded);
+                            // config.release should be like "n8n@1.122.5"
+                            if (config.release && typeof config.release === 'string') {
+                                const versionMatch = config.release.match(/n8n@([\d.]+)/);
+                                if (versionMatch && versionMatch[1]) {
+                                    version = versionMatch[1];
+                                }
+                            }
+                        } catch (e) {
+                            // Silent fail on parse error
+                        }
+                    }
+                }
+            } catch (e) { }
+        }
+
+        clearTimeout(timeoutId);
+
+    } catch (e) {
+        // Silent fail
+    }
+
+    let updateAvailable = false;
+    if (version) {
+        const latest = await getLatestN8nVersion();
+        if (latest && compareVersions(latest, version) > 0) {
+            updateAvailable = true;
+        }
+    }
+
+    return { version, updateAvailable };
 }
 
 export async function getServerStatus(baseUrl: string, apiKey: string): Promise<ServerStatus> {
+    const cleanUrl = baseUrl.replace(/\/$/, "");
     try {
-        const workflows = await getN8nWorkflows(baseUrl, apiKey);
+        // Fetch workflows for counts
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        const res = await fetch(`${cleanUrl}/api/v1/workflows`, {
+            headers: {
+                'X-N8N-API-KEY': apiKey,
+            },
+            next: { revalidate: 0 },
+            signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) {
+            throw new Error(`Failed to fetch workflows: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        const workflows: N8nWorkflow[] = data.data;
+
+        // Fetch version info (parallel-ish but we'll await it)
+        const versionInfo = await getN8nVersionInfo(baseUrl, apiKey);
+
         return {
             online: true,
             workflowCount: workflows.length,
             activeWorkflowCount: workflows.filter(w => w.active).length,
+            version: versionInfo.version,
+            updateAvailable: versionInfo.updateAvailable
         };
     } catch (error) {
         return {

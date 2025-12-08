@@ -6,6 +6,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.5.0",
+        date: "2025-12-08",
+        changes: [
+            "Added n8n version detection on server detail page",
+            "Shows 'Update Available' badge when newer n8n version exists",
+            "Smart version extraction from Sentry config for proxied instances",
+            "Added tagline: 'One Kizuna. All your automation.'",
+            "Code cleanup and interface optimization"
+        ]
+    },
+    {
         version: "0.4.0",
         date: "2025-12-04",
         changes: [
@@ -93,4 +104,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.4.0";
+export const CURRENT_VERSION = "0.5.0";

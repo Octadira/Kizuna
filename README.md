@@ -1,6 +1,6 @@
-# n8Kizuna - The Ultimate n8n Command Center
+# n8Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.4.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black)
@@ -21,6 +21,7 @@ Stop juggling multiple tabs and credentials. With n8Kizuna, you gain a "single p
 ### 🚀 Centralized Management
 *   **Multi-Server Dashboard:** Monitor the health and status of unlimited n8n instances from one view.
 *   **Real-Time Analytics:** Track active workflows, execution counts, and server uptime instantly.
+*   **n8n Version Detection:** See the running n8n version and get notified when updates are available.
 *   **Delete Server with Backup:** Safely remove servers with optional backup download.
 
 ### ⚡ Seamless Orchestration
@@ -77,6 +78,13 @@ Stop juggling multiple tabs and credentials. With n8Kizuna, you gain a "single p
 ---
 
 ## Changelog
+
+### v0.5.0 (2025-12-08)
+*   **New Feature:** n8n version detection on server detail page.
+*   **New Feature:** "Update Available" badge when newer n8n version exists.
+*   **Improvement:** Smart version extraction from Sentry config for proxied instances.
+*   **Branding:** Added tagline: "One Kizuna. All your automation."
+*   **Cleanup:** Code optimization and interface improvements.
 
 ### v0.4.0 (2025-12-04)
 *   **New Feature:** Delete Server - Added backup download option before deletion.

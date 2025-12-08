@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "n8Kizuna",
-  description: "Unified n8n Server Manager",
+  description: "One Kizuna. All your automation. - Unified n8n Server Manager",
 };
 
 import { ThemeProvider } from "@/components/theme-provider";
