@@ -8,6 +8,7 @@ import { getExecution, getN8nWorkflow } from "@/lib/n8n";
 import { redirect } from "next/navigation";
 
 import { validateServerUrl } from "@/lib/security";
+import { validateGithubAccess, pushToGithub } from "@/lib/github";
 
 export async function addServer(formData: FormData) {
     const supabase = await createClient();
@@ -420,3 +421,112 @@ export async function deleteServer(serverId: string) {
     revalidatePath("/");
 
 }
+
+// --- GitHub Integration Actions ---
+
+export async function saveGithubIntegration(formData: FormData) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    const owner = formData.get("owner") as string;
+    const repo = formData.get("repo") as string;
+    const branch = (formData.get("branch") as string) || "main";
+    const token = formData.get("token") as string;
+
+    if (!owner || !repo || !token) {
+        throw new Error("Missing required fields");
+    }
+
+    // Validate access before saving
+    const isValid = await validateGithubAccess({
+        owner,
+        repo,
+        branch,
+        accessToken: token
+    });
+
+    if (!isValid) {
+        throw new Error("Could not validate GitHub access. Check your credentials and repository.");
+    }
+
+    const encryptedToken = encrypt(token);
+
+    const { error } = await supabase.from("github_integrations").upsert({
+        user_id: user.id,
+        owner,
+        repo,
+        branch,
+        access_token: encryptedToken,
+        updated_at: new Date().toISOString()
+    }, { onConflict: "user_id" });
+
+    if (error) {
+        console.error("Error saving GitHub integration:", error);
+        throw new Error("Failed to save integration");
+    }
+
+    revalidatePath("/settings/github");
+}
+
+export async function removeGithubIntegration() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    await supabase.from("github_integrations").delete().eq("user_id", user.id);
+    revalidatePath("/settings/github");
+}
+
+export async function pushWorkflowToGithubAction(serverId: string, workflowId: string, workflowData: any, commitMessage?: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    // 1. Get Integration Settings
+    const { data: integration } = await supabase
+        .from("github_integrations")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+    if (!integration) {
+        throw new Error("GitHub integration not configured");
+    }
+
+    // 2. Get Server Name (for folder structure)
+    const { data: server } = await supabase
+        .from("servers")
+        .select("name")
+        .eq("id", serverId)
+        .single();
+
+    const serverName = server?.name || "Unknown Server";
+
+    // 3. Prepare config
+    const config = {
+        owner: integration.owner,
+        repo: integration.repo,
+        branch: integration.branch,
+        accessToken: decrypt(integration.access_token)
+    };
+
+    // 4. Sanitize path
+    const safeServerName = serverName.replace(/[^a-zA-Z0-9-_]/g, '_');
+    const safeWorkflowName = workflowData.name.replace(/[^a-zA-Z0-9-_ ]/g, '').replace(/\s+/g, '_');
+    const fileName = `${safeWorkflowName}.json`;
+    const filePath = `workflows/${safeServerName}/${fileName}`;
+
+    // 5. Clean workflow data (optional, but good to format JSON)
+    const content = JSON.stringify(workflowData, null, 2);
+    const message = commitMessage || `Update workflow: ${workflowData.name}`;
+
+    // 6. Push
+    await pushToGithub(config, filePath, content, message);
+
+    return { success: true, filePath };
+}
+

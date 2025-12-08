@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Button } from "./ui/Button";
 import { Card } from "./ui/Card";
 import { Switch } from "./ui/Switch";
-import { Download, Activity, FileJson, Info, ExternalLink, Webhook, Copy, StickyNote, Loader2, Trash2, Save } from "lucide-react";
-import { toggleWorkflowStatus, saveWorkflowNote, saveWorkflowBackup, deleteBackup, fetchExecutionDetails, saveWorkflowTemplate, deployWorkflowToServer, fetchFullWorkflow } from "@/app/actions";
+import { Download, Activity, FileJson, Info, ExternalLink, Webhook, Copy, StickyNote, Loader2, Trash2, Save, Github } from "lucide-react";
+import { toggleWorkflowStatus, saveWorkflowNote, saveWorkflowBackup, deleteBackup, fetchExecutionDetails, saveWorkflowTemplate, deployWorkflowToServer, fetchFullWorkflow, pushWorkflowToGithubAction } from "@/app/actions";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./ui/Dialog";
 import { Input } from "./ui/Input";
@@ -52,6 +52,9 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
     const [cloneDialogOpen, setCloneDialogOpen] = useState(false);
     const [targetServerId, setTargetServerId] = useState("");
     const [cloning, setCloning] = useState(false);
+
+    // GitHub State
+    // const [pushingToGithub, setPushingToGithub] = useState(false); // Removed as per instruction
 
     const ensureFullWorkflow = async () => {
         if (fullWorkflow) return fullWorkflow;
@@ -140,6 +143,43 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
         }
     };
 
+    // GitHub Push State
+    const [pushDialogOpen, setPushDialogOpen] = useState(false);
+    const [commitMessage, setCommitMessage] = useState("");
+    const [pushStatus, setPushStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [pushResultMsg, setPushResultMsg] = useState("");
+
+    const openPushDialog = () => {
+        setCommitMessage(`Update workflow: ${workflow.name}`);
+        setPushStatus('idle');
+        setPushResultMsg("");
+        setPushDialogOpen(true);
+    };
+
+    const handleConfirmPush = async () => {
+        setPushStatus('loading');
+        try {
+            const wf = await ensureFullWorkflow();
+            if (!wf) {
+                setPushStatus('error');
+                setPushResultMsg("Could not load full workflow data.");
+                return;
+            }
+
+            await pushWorkflowToGithubAction(serverId, workflow.id, wf, commitMessage);
+            setPushStatus('success');
+            setPushResultMsg("Workflow pushed to GitHub successfully!");
+        } catch (error: any) {
+            console.error("Failed to push to GitHub", error);
+            setPushStatus('error');
+            if (error.message.includes("integration not configured")) {
+                setPushResultMsg("GitHub integration is not configured. Please go to settings.");
+            } else {
+                setPushResultMsg(error.message || "An unknown error occurred.");
+            }
+        }
+    };
+
     const handleDeleteBackup = async (id: string, path: string) => {
         if (!confirm("Are you sure you want to delete this backup?")) return;
         try {
@@ -183,6 +223,86 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
 
     return (
         <div className="space-y-6">
+            {/* GitHub Push Dialog */}
+            <Dialog open={pushDialogOpen} onOpenChange={setPushDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Push to GitHub</DialogTitle>
+                    </DialogHeader>
+
+                    <div className="py-4 space-y-4">
+                        {pushStatus === 'idle' && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Commit Message</label>
+                                <textarea
+                                    className="w-full min-h-[100px] p-3 rounded-md border border-input bg-background text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                    value={commitMessage}
+                                    onChange={(e) => setCommitMessage(e.target.value)}
+                                    placeholder="Describe your changes..."
+                                />
+                            </div>
+                        )}
+
+                        {pushStatus === 'loading' && (
+                            <div className="flex flex-col items-center justify-center py-6 gap-3 text-muted-foreground">
+                                <Loader2 className="animate-spin" size={32} />
+                                <p>Pushing to repository...</p>
+                            </div>
+                        )}
+
+                        {pushStatus === 'success' && (
+                            <div className="flex flex-col items-center justify-center py-4 gap-3 text-green-600 dark:text-green-400">
+                                <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                                    <Github size={24} />
+                                </div>
+                                <div className="text-center">
+                                    <h3 className="font-semibold text-lg">Success!</h3>
+                                    <p className="text-sm opacity-90">{pushResultMsg}</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {pushStatus === 'error' && (
+                            <div className="flex flex-col items-center justify-center py-4 gap-3 text-destructive">
+                                <Info size={32} />
+                                <div className="text-center">
+                                    <h3 className="font-semibold text-lg">Push Failed</h3>
+                                    <p className="text-sm opacity-90">{pushResultMsg}</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <DialogFooter>
+                        {pushStatus === 'idle' && (
+                            <>
+                                <Button variant="outline" onClick={() => setPushDialogOpen(false)}>Cancel</Button>
+                                <Button onClick={handleConfirmPush} className="gap-2">
+                                    <Github size={16} />
+                                    Push Commit
+                                </Button>
+                            </>
+                        )}
+                        {pushStatus === 'success' && (
+                            <Button onClick={() => setPushDialogOpen(false)}>Close</Button>
+                        )}
+                        {pushStatus === 'error' && (
+                            <>
+                                <Button variant="outline" onClick={() => setPushDialogOpen(false)}>Close</Button>
+                                {pushResultMsg.includes("configured") && (
+                                    <Button onClick={() => window.location.href = "/settings/github"}>
+                                        Go to Settings
+                                    </Button>
+                                )}
+                                {!pushResultMsg.includes("configured") && (
+                                    <Button onClick={() => setPushStatus('idle')}>Try Again</Button>
+                                )}
+                            </>
+                        )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             {/* Template Dialog */}
             <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
                 <DialogContent>
@@ -297,6 +417,12 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
                         {(backingUp || loadingFullWorkflow) ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                         Save Backup
                     </Button>
+                    {features.github_sync && (
+                        <Button variant="outline" onClick={openPushDialog} disabled={loadingFullWorkflow} className="gap-2">
+                            {loadingFullWorkflow ? <Loader2 className="animate-spin" size={16} /> : <Github size={16} />}
+                            Push to GitHub
+                        </Button>
+                    )}
                     <Button variant="outline" onClick={handleDownload} disabled={loadingFullWorkflow} className="gap-2">
                         {loadingFullWorkflow ? <Loader2 className="animate-spin" size={16} /> : <Download size={16} />}
                         Download JSON

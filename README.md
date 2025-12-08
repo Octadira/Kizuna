@@ -1,10 +1,16 @@
 # n8Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.5.1-blue.svg)
+![Version](https://img.shields.io/badge/version-0.6.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Next.js](https://img.shields.io/badge/Next.js-14-black)
-![Supabase](https://img.shields.io/badge/Supabase-Database-green)
+![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
+<br/>
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-19-block?logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?logo=tailwind-css&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase&logoColor=white)
+![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&logoColor=white)
 
 ![n8Kizuna Dashboard](pbl/hero.png)
 
@@ -28,6 +34,7 @@ Stop juggling multiple tabs and credentials. With n8Kizuna, you gain a "single p
 *   **Cross-Server Cloning:** Copy workflows directly from one server to another with a single click.
 *   **Workflow Templates:** Save your best workflows as templates and deploy them anywhere.
 *   **Smart Backups:** Automatically backup workflows with metadata and version history.
+*   **GitHub Integration:** Direct "Push to GitHub" for workflow versioning with commit messages.
 
 ### 🛡️ Enterprise-Grade Security
 *   **Role-Based Access Control (RBAC):** Granular permissions for plugin management and server access.
@@ -78,6 +85,12 @@ Stop juggling multiple tabs and credentials. With n8Kizuna, you gain a "single p
 ---
 
 ## Changelog
+
+### v0.6.0 (2025-12-08)
+*   **New Feature:** GitHub Integration - Push workflows directly to your repository with commit messages.
+*   **New Feature:** Archived/Inactive Workflows Tab - dedicated view for non-active workflows.
+*   **UI:** "Ghost Mode" styling for inactive workflows to reduce visual clutter.
+*   **Security:** Secure storage for Personal Access Tokens (PAT).
 
 ### v0.5.1 (2025-12-08)
 *   **Security:** Critical update to Next.js v16.0.7 (Patched React2Shell / CVE-2025-55182).

@@ -271,6 +271,41 @@ WITH CHECK (
 );
 
 -- ----------------------------------------------------------------
+-- SECTION 5: GITHUB INTEGRATION
+-- ----------------------------------------------------------------
+
+-- 5.1 Create 'github_integrations' table
+CREATE TABLE IF NOT EXISTS github_integrations (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    owner TEXT NOT NULL,
+    repo TEXT NOT NULL,
+    branch TEXT DEFAULT 'main',
+    access_token TEXT NOT NULL, -- Encrypted Personal Access Token
+    UNIQUE(user_id)
+);
+
+-- 5.2 Enable RLS for github_integrations
+ALTER TABLE github_integrations ENABLE ROW LEVEL SECURITY;
+
+-- 5.3 Policies for github_integrations
+CREATE POLICY "Users can manage their own github integration"
+ON github_integrations
+FOR ALL
+TO authenticated
+USING ((select auth.uid()) = user_id)
+WITH CHECK ((select auth.uid()) = user_id);
+
+-- 5.4 Add GitHub Sync plugin to default list
+-- Note: We updated the INSERT statement in Section 3 to include this, or we can insert it here if not present.
+INSERT INTO plugins (key, name, description, enabled)
+VALUES 
+    ('github_sync', 'GitHub Sync', 'Backup and version your workflows directly to GitHub.', FALSE)
+ON CONFLICT (key) DO NOTHING;
+
+-- ----------------------------------------------------------------
 -- SETUP COMPLETE
 -- ----------------------------------------------------------------
 -- All tables, policies, and configurations have been created.

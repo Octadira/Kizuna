@@ -6,6 +6,18 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.6.0",
+        date: "2025-12-08",
+        changes: [
+            "New Feature: 'Push to GitHub' integration for workflows",
+            "New Feature: Dedicated 'Archived / Inactive' workflows tab view",
+            "New Feature: Ghost mode visual distinction for inactive workflows",
+            "New Feature: GitHub Settings configuration with secure PAT storage",
+            "Improved: Workflow list layout with filtering tabs",
+            "Security: Commit messages via secure modal dialog"
+        ]
+    },
+    {
         version: "0.5.1",
         date: "2025-12-08",
         changes: [
@@ -112,4 +124,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.5.1";
+export const CURRENT_VERSION = "0.6.0";
