@@ -5,8 +5,11 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "n8Kizuna",
+  title: "Kizuna",
   description: "One Kizuna. All your automation. - Unified n8n Server Manager",
+  appleWebApp: {
+    title: "Kizuna",
+  },
 };
 
 import { ThemeProvider } from "@/components/theme-provider";

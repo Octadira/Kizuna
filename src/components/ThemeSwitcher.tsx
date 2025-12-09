@@ -27,7 +27,7 @@ export function ThemeSwitcher() {
         checkPlugin();
 
         // 2. Load saved theme preference
-        const savedTheme = localStorage.getItem("n8kizuna-theme-color");
+        const savedTheme = localStorage.getItem("kizuna-theme-color");
         if (savedTheme) {
             setCurrentTheme(savedTheme);
             applyTheme(savedTheme);
@@ -41,7 +41,7 @@ export function ThemeSwitcher() {
         const newTheme = themes[nextIndex];
 
         setCurrentTheme(newTheme);
-        localStorage.setItem("n8kizuna-theme-color", newTheme);
+        localStorage.setItem("kizuna-theme-color", newTheme);
         applyTheme(newTheme);
     };
 

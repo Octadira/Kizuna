@@ -1,4 +1,4 @@
-# n8Kizuna - One Kizuna. All your automation.
+# Kizuna - One Kizuna. All your automation.
 
 ![Version](https://img.shields.io/badge/version-0.6.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
@@ -12,13 +12,13 @@
 ![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&logoColor=white)
 
-![n8Kizuna Dashboard](pbl/hero.png)
+![Kizuna Dashboard](pbl/hero.png)
 
 ## Unlock the Full Potential of Your Automation Infrastructure
 
-**n8Kizuna** is the centralized control plane for your n8n ecosystem. Designed for power users and DevOps teams, it bridges the gap between scattered n8n instances, offering a unified interface for monitoring, management, and secure orchestration.
+**Kizuna** is the centralized control plane for your n8n ecosystem. Designed for power users and DevOps teams, it bridges the gap between scattered n8n instances, offering a unified interface for monitoring, management, and secure orchestration.
 
-Stop juggling multiple tabs and credentials. With n8Kizuna, you gain a "single pane of glass" visibility into your entire automation landscape, ensuring your workflows are always running, secure, and optimized.
+Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pane of glass" visibility into your entire automation landscape, ensuring your workflows are always running, secure, and optimized.
 
 ---
 
@@ -59,8 +59,8 @@ Stop juggling multiple tabs and credentials. With n8Kizuna, you gain a "single p
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/n8kizuna.git
-    cd n8kizuna
+    git clone https://github.com/yourusername/kizuna.git
+    cd kizuna
     ```
 
 2.  **Install dependencies:**

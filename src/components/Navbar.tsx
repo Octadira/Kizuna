@@ -41,9 +41,11 @@ export function Navbar() {
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 left-0 right-0 h-16 border-b border-border bg-background/80 backdrop-blur-md z-40 flex items-center justify-between px-4">
                 <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center font-bold text-primary-foreground shadow-md">
-                        n8
-                    </div>
+                    <img
+                        src="/kizuna-logo-sm.webp"
+                        alt="Kizuna Logo"
+                        className="h-8 w-auto"
+                    />
                     <span className="text-xl font-bold tracking-tight text-foreground">Kizuna</span>
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -65,9 +67,11 @@ export function Navbar() {
                 isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 <div className="mb-8 px-2 flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center font-bold text-primary-foreground shadow-md">
-                        n8
-                    </div>
+                    <img
+                        src="/kizuna-logo-sm.webp"
+                        alt="Kizuna Logo"
+                        className="h-8 w-auto"
+                    />
                     <span className="text-xl font-bold tracking-tight text-sidebar-foreground">Kizuna</span>
                 </div>
 

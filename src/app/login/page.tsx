@@ -44,10 +44,12 @@ export default function LoginPage() {
 
             <Card className="w-full max-w-md p-8 relative z-10 border-border bg-card/80 backdrop-blur-xl shadow-xl">
                 <div className="flex flex-col items-center mb-8">
-                    <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center font-bold text-primary-foreground text-xl mb-4 shadow-lg">
-                        n8
-                    </div>
-                    <h1 className="text-2xl font-bold text-foreground">Welcome to n8Kizuna</h1>
+                    <img
+                        src="/kizuna-logo-sm.webp"
+                        alt="Kizuna Logo"
+                        className="h-12 w-auto mb-4"
+                    />
+                    <h1 className="text-2xl font-bold text-foreground">Welcome to Kizuna</h1>
                     <p className="text-muted-foreground mt-2 text-center">
                         One Kizuna. All your automation.
                     </p>

@@ -21,7 +21,7 @@ export default async function PluginsPage() {
                             Plugins & Extensions
                         </h2>
                         <p className="text-sm text-muted-foreground">
-                            Manage additional features and modules for your n8Kizuna instance.
+                            Manage additional features and modules for your Kizuna instance.
                         </p>
                     </div>
 

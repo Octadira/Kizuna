@@ -1,10 +1,10 @@
 -- ================================================================
--- N8KIZUNA DATABASE SETUP - COMPLETE SCHEMA
+-- KIZUNA DATABASE SETUP - COMPLETE SCHEMA
 -- ================================================================
 -- Run this script in the Supabase SQL Editor to set up the entire database structure.
 -- This includes all tables, security policies, and plugin configurations.
 --
--- Author: n8Kizuna Team
+-- Author: Kizuna Team
 -- Last Updated: 2025-12-03
 -- ================================================================
 
@@ -309,5 +309,5 @@ ON CONFLICT (key) DO NOTHING;
 -- SETUP COMPLETE
 -- ----------------------------------------------------------------
 -- All tables, policies, and configurations have been created.
--- You can now use the n8Kizuna application with full functionality.
+-- You can now use the Kizuna application with full functionality.
 -- ----------------------------------------------------------------
