@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
 import { Eye, EyeOff } from "lucide-react";
+import { CURRENT_VERSION } from "@/lib/changelog";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -106,7 +107,7 @@ export default function LoginPage() {
 
                 <div className="mt-6 text-center">
                     <p className="text-xs text-muted-foreground/60 font-mono">
-                        v0.7.0
+                        v{CURRENT_VERSION}
                     </p>
                 </div>
             </Card>
