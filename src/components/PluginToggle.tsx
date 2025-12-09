@@ -15,10 +15,11 @@ import { Button } from "./ui/Button";
 
 interface PluginToggleProps {
     pluginId: string;
+    pluginKey: string;
     initialEnabled: boolean;
 }
 
-export function PluginToggle({ pluginId, initialEnabled }: PluginToggleProps) {
+export function PluginToggle({ pluginId, pluginKey, initialEnabled }: PluginToggleProps) {
     const [enabled, setEnabled] = useState(initialEnabled);
     const [loading, setLoading] = useState(false);
     const [errorModalOpen, setErrorModalOpen] = useState(false);
@@ -30,6 +31,15 @@ export function PluginToggle({ pluginId, initialEnabled }: PluginToggleProps) {
         setEnabled(checked);
         try {
             await togglePlugin(pluginId, checked);
+
+            // For visual plugins, force a reload to apply changes immediately
+            if (['theme_switcher', 'animated_background'].includes(pluginKey)) {
+                // Short timeout to ensure server processing is effectively done
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            }
+
         } catch (error: any) {
             console.error("Failed to toggle plugin", error);
             setEnabled(!checked); // Revert
@@ -42,7 +52,9 @@ export function PluginToggle({ pluginId, initialEnabled }: PluginToggleProps) {
             }
             setErrorModalOpen(true);
         } finally {
-            setLoading(false);
+            if (!['theme_switcher', 'animated_background'].includes(pluginKey)) {
+                setLoading(false);
+            }
         }
     };
 

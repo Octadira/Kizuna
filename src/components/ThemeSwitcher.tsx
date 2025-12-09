@@ -21,18 +21,23 @@ export function ThemeSwitcher() {
 
             if (data?.enabled) {
                 setEnabled(true);
+                // Load saved theme preference ONLY if enabled
+                const savedTheme = localStorage.getItem("kizuna-theme-color");
+                if (savedTheme) {
+                    setCurrentTheme(savedTheme);
+                    applyTheme(savedTheme);
+                }
+            } else {
+                // Plugin disabled: Force default theme
+                setEnabled(false);
+                setCurrentTheme("mint");
+                applyTheme("mint");
+                localStorage.removeItem("kizuna-theme-color");
             }
         };
 
         checkPlugin();
-
-        // 2. Load saved theme preference
-        const savedTheme = localStorage.getItem("kizuna-theme-color");
-        if (savedTheme) {
-            setCurrentTheme(savedTheme);
-            applyTheme(savedTheme);
-        }
-    }, []);
+    }, []); // Run once on mount
 
     const toggleTheme = () => {
         const themes = ["mint", "classic", "ocean"];

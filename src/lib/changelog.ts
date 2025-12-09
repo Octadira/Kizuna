@@ -6,6 +6,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.8.0",
+        date: "2025-12-09",
+        changes: [
+            "New Plugin: 'Animated Background' - Geometric particle network background (Toggleable)",
+            "Visual: Implemented global animated background for enhanced aesthetics",
+            "UX Improved: Auto-refresh on visual plugin toggle for instant feedback",
+            "Logic: Theme Switcher now reverts to default 'Mint' theme when disabled",
+            "UI: Updated Login page with new dynamic background and version display"
+        ]
+    },
+    {
         version: "0.7.0",
         date: "2025-12-09",
         changes: [
@@ -136,4 +147,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.7.0";
+export const CURRENT_VERSION = "0.8.0";

@@ -39,10 +39,10 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background" />
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+            {/* Background is now handled globally by GeometricBackground */}
 
-            <Card className="w-full max-w-md p-8 relative z-10 border-border bg-card/80 backdrop-blur-xl shadow-xl">
+            <Card className="w-full max-w-md p-8 relative z-10 border-border bg-card/85 backdrop-blur-xl shadow-2xl">
                 <div className="flex flex-col items-center mb-8">
                     <img
                         src="/kizuna-logo-sm.webp"
@@ -103,6 +103,12 @@ export default function LoginPage() {
                         Sign In
                     </Button>
                 </form>
+
+                <div className="mt-6 text-center">
+                    <p className="text-xs text-muted-foreground/60 font-mono">
+                        v0.7.0
+                    </p>
+                </div>
             </Card>
         </div>
     );

@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.7.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.8.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -87,6 +87,13 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 ---
 
 ## Changelog
+
+### v0.8.0 (2025-12-09)
+*   **New Plugin:** 'Animated Background' - Geometric particle network background.
+*   **Visual:** Implemented global animated background for enhanced aesthetics.
+*   **UX:** Auto-refresh on visual plugin toggle for instant feedback.
+*   **Logic:** Theme Switcher now reverts to default 'Mint' theme when disabled.
+*   **UI:** Updated Login page with new dynamic background and version display.
 
 ### v0.7.0 (2025-12-09)
 *   **New Feature:** Collapsible Sidebar - Maximize your workspace with a persistent, memory-state sidebar.

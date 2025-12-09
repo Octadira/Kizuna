@@ -44,6 +44,7 @@ export default async function PluginsPage() {
                                         </div>
                                         <PluginToggle
                                             pluginId={plugin.id}
+                                            pluginKey={plugin.key}
                                             initialEnabled={plugin.enabled}
                                         />
                                     </div>
