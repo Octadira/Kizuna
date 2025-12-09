@@ -12,7 +12,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&logoColor=white)
 
-![Kizuna Dashboard](pbl/hero.png)
+![Kizuna Dashboard](public/hero.png)
 
 ## Unlock the Full Potential of Your Automation Infrastructure
 
