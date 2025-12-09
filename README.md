@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.6.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.7.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -26,11 +26,13 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 
 ### 🚀 Centralized Management
 *   **Multi-Server Dashboard:** Monitor the health and status of unlimited n8n instances from one view.
-*   **Real-Time Analytics:** Track active workflows, execution counts, and server uptime instantly.
+*   **Lightning Fast Loading:** Optimized non-blocking dashboard with individual server status streaming.
+*   **Real-Time Analytics:** Track active workflows, execution counts, server latency, and uptime instantly.
 *   **n8n Version Detection:** See the running n8n version and get notified when updates are available.
 *   **Delete Server with Backup:** Safely remove servers with optional backup download.
 
 ### ⚡ Seamless Orchestration
+*   **Collapsible Sidebar:** Smart workspace management with memory state for persistent layout preference.
 *   **Cross-Server Cloning:** Copy workflows directly from one server to another with a single click.
 *   **Workflow Templates:** Save your best workflows as templates and deploy them anywhere.
 *   **Smart Backups:** Automatically backup workflows with metadata and version history.
@@ -85,6 +87,14 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 ---
 
 ## Changelog
+
+### v0.7.0 (2025-12-09)
+*   **New Feature:** Collapsible Sidebar - Maximize your workspace with a persistent, memory-state sidebar.
+*   **Performance:** Dashboard Re-architecture - Non-blocking server loading for instant page rendering.
+*   **Performance:** Parallelized n8n status fetching (Basic + Version) for reduced latency.
+*   **UX:** Added Latency Indicator (ms) to server cards.
+*   **UX:** Improved loading states with blur effects and skeletons.
+*   **UX:** Optimized mobile drawer and responsive behavior.
 
 ### v0.6.0 (2025-12-08)
 *   **New Feature:** GitHub Integration - Push workflows directly to your repository with commit messages.

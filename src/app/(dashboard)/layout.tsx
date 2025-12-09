@@ -1,4 +1,6 @@
-import { Navbar } from "@/components/Navbar";
+
+import { SidebarProvider } from "@/components/SidebarProvider";
+import { DashboardShell } from "@/components/DashboardShell";
 import NextTopLoader from 'nextjs-toploader';
 
 export default function DashboardLayout({
@@ -7,7 +9,7 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="flex min-h-screen">
+        <SidebarProvider>
             <NextTopLoader
                 color="#22c55e"
                 initialPosition={0.08}
@@ -19,12 +21,9 @@ export default function DashboardLayout({
                 speed={200}
                 shadow="0 0 10px #22c55e,0 0 5px #22c55e"
             />
-            <Navbar />
-            <main className="flex-1 w-full md:pl-64 transition-all duration-300">
-                <div className="p-4 pt-20 md:p-12 max-w-7xl mx-auto">
-                    {children}
-                </div>
-            </main>
-        </div>
+            <DashboardShell>
+                {children}
+            </DashboardShell>
+        </SidebarProvider>
     );
 }

@@ -6,6 +6,18 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.7.0",
+        date: "2025-12-09",
+        changes: [
+            "New Feature: Collapsible Sidebar with memory state for improved workspace",
+            "Performance: Dashboard server cards now load status independently (non-blocking)",
+            "Performance: Parallelized n8n status fetching (Workflows + Version check)",
+            "UX Improved: Added latency indicator (ms) to server cards",
+            "UX Improved: Added skeleton/blur loading states for better perceived performance",
+            "UX Improved: Responsive sidebar behavior with optimized mobile drawer"
+        ]
+    },
+    {
         version: "0.6.0",
         date: "2025-12-08",
         changes: [
@@ -124,4 +136,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.6.0";
+export const CURRENT_VERSION = "0.7.0";

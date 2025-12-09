@@ -21,22 +21,6 @@ export default async function DashboardPage() {
         .select("*")
         .order("created_at", { ascending: false });
 
-    // Fetch status for all servers in parallel
-    const serversWithStatus = await Promise.all(
-        (servers || []).map(async (server) => {
-            try {
-                const apiKey = decrypt(server.api_key);
-                const status = await getServerStatus(server.url, apiKey);
-                return { ...server, status };
-            } catch (e) {
-                return {
-                    ...server,
-                    status: { online: false, workflowCount: 0, activeWorkflowCount: 0 }
-                };
-            }
-        })
-    );
-
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
@@ -53,8 +37,8 @@ export default async function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {serversWithStatus && serversWithStatus.length > 0 ? (
-                    serversWithStatus.map((server) => (
+                {servers && servers.length > 0 ? (
+                    servers.map((server) => (
                         <ServerCard key={server.id} server={server} />
                     ))
                 ) : (

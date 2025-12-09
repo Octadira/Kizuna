@@ -144,10 +144,14 @@ export async function getN8nVersionInfo(baseUrl: string, apiKey: string): Promis
 
 export async function getServerStatus(baseUrl: string, apiKey: string): Promise<ServerStatus> {
     const cleanUrl = baseUrl.replace(/\/$/, "");
-    try {
-        // Fetch workflows for counts
+
+    // We run these in parallel to speed up response time
+    // One promise gets basic workflow data (critical for online status)
+    // The other gets version info (nice to have)
+
+    const workflowPromise = (async () => {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
 
         const res = await fetch(`${cleanUrl}/api/v1/workflows`, {
             headers: {
@@ -163,10 +167,22 @@ export async function getServerStatus(baseUrl: string, apiKey: string): Promise<
         }
 
         const data = await res.json();
-        const workflows: N8nWorkflow[] = data.data;
+        return data.data as N8nWorkflow[];
+    })();
 
-        // Fetch version info (parallel-ish but we'll await it)
-        const versionInfo = await getN8nVersionInfo(baseUrl, apiKey);
+    const versionPromise = getN8nVersionInfo(baseUrl, apiKey);
+
+    try {
+        // We await both outcomes
+        const [workflowsResult, versionResult] = await Promise.allSettled([workflowPromise, versionPromise]);
+
+        // If workflows failed, the server is effectively offline or auth failed
+        if (workflowsResult.status === 'rejected') {
+            throw new Error(workflowsResult.reason);
+        }
+
+        const workflows = workflowsResult.value;
+        const versionInfo = versionResult.status === 'fulfilled' ? versionResult.value : { version: undefined, updateAvailable: undefined };
 
         return {
             online: true,
@@ -175,6 +191,7 @@ export async function getServerStatus(baseUrl: string, apiKey: string): Promise<
             version: versionInfo.version,
             updateAvailable: versionInfo.updateAvailable
         };
+
     } catch (error) {
         return {
             online: false,

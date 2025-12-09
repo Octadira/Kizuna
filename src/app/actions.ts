@@ -530,3 +530,26 @@ export async function pushWorkflowToGithubAction(serverId: string, workflowId: s
     return { success: true, filePath };
 }
 
+import { getServerStatus } from "@/lib/n8n";
+
+export async function fetchServerStatus(serverId: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    const { data: server } = await supabase
+        .from("servers")
+        .select("url, api_key")
+        .eq("id", serverId)
+        .single();
+
+    if (!server) throw new Error("Server not found");
+
+    const apiKey = decrypt(server.api_key);
+
+    // We don't catch errors here so the client can handle them (e.g. show offline status)
+    // or we can catch and return a standard "offline" object. 
+    // Let's return the status directly or throw.
+    return await getServerStatus(server.url, apiKey);
+}
