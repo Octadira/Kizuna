@@ -8,6 +8,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ServerAnalytics } from "@/components/ServerAnalytics";
 import { DeleteServerButton } from "@/components/DeleteServerButton";
+import { RefreshServerButton } from "@/components/RefreshServerButton";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -51,7 +52,19 @@ export default async function ServerPage({ params }: PageProps) {
             getExecutions(server.url, apiKey),
             getN8nVersionInfo(server.url, apiKey)
         ]);
-        workflows = fetchedWorkflows;
+
+        // Filter out heavy/sensitive data (nodes, connections, pinData, etc.)
+        // This dramatically reduces the HTML size and prevents exposing workflow logic in the source.
+        workflows = fetchedWorkflows.map((wf: any) => ({
+            id: wf.id,
+            name: wf.name,
+            active: wf.active,
+            tags: wf.tags,
+            description: wf.description,
+            createdAt: wf.createdAt,
+            updatedAt: wf.updatedAt,
+        }));
+
         executions = fetchedExecutions;
         versionInfo = fetchedVersionInfo;
     } catch (e: any) {
@@ -100,6 +113,7 @@ export default async function ServerPage({ params }: PageProps) {
                 </div>
 
                 <div className="flex gap-3">
+                    <RefreshServerButton serverId={server.id} className="border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm h-10 w-10" />
                     <Link href={`/servers/${server.id}/edit`}>
                         <Button variant="outline" className="gap-2">
                             Edit Server

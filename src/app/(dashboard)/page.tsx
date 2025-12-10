@@ -1,11 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Plus, Activity, Layers } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { decrypt } from "@/utils/encryption";
-import { getServerStatus } from "@/lib/n8n";
 import { ServerCard } from "@/components/ServerCard";
 
 export default async function DashboardPage() {

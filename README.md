@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.8.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.8.1-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -87,6 +87,11 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 ---
 
 ## Changelog
+
+### v0.8.1 (2025-12-10)
+*   **Performance:** Switched to individual streaming server status for instant dashboard loading.
+*   **Refactor:** Removed batch processing to eliminate "waterfall" waiting times.
+*   **Cleanup:** Code optimization for ServerCard and actions.
 
 ### v0.8.0 (2025-12-09)
 *   **New Plugin:** 'Animated Background' - Geometric particle network background.

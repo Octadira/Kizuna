@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { fetchServerStatus } from "@/app/actions";
 import { cn } from "@/lib/utils";
+import { RefreshServerButton } from "./RefreshServerButton";
 
 interface ServerCardProps {
     server: {
@@ -16,10 +17,12 @@ interface ServerCardProps {
     };
 }
 
-interface ServerStatus {
+export interface ServerStatus {
     online: boolean;
     workflowCount: number;
     activeWorkflowCount: number;
+    version?: string;
+    updateAvailable?: boolean;
 }
 
 export function ServerCard({ server }: ServerCardProps) {
@@ -28,46 +31,39 @@ export function ServerCard({ server }: ServerCardProps) {
     const [latency, setLatency] = useState<number | null>(null);
     const [error, setError] = useState(false);
 
+    const checkStatus = async () => {
+        setIsLoading(true);
+        const startTime = performance.now();
+        try {
+            const result = await fetchServerStatus(server.id);
+            const endTime = performance.now();
+
+            setStatus(result);
+            setLatency(Math.round(endTime - startTime));
+            setIsLoading(false);
+            setError(false);
+        } catch (e) {
+            console.error("Failed to fetch status", e);
+            setError(true);
+            setStatus({ online: false, workflowCount: 0, activeWorkflowCount: 0 });
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
-        let isMounted = true;
-
-        const checkStatus = async () => {
-            const startTime = performance.now();
-            try {
-                const result = await fetchServerStatus(server.id);
-                const endTime = performance.now();
-
-                if (isMounted) {
-                    setStatus(result);
-                    setLatency(Math.round(endTime - startTime));
-                    setIsLoading(false);
-                }
-            } catch (e) {
-                if (isMounted) {
-                    console.error("Failed to fetch status", e);
-                    setError(true);
-                    setStatus({ online: false, workflowCount: 0, activeWorkflowCount: 0 });
-                    setIsLoading(false);
-                }
-            }
-        };
-
         checkStatus();
-
-        return () => {
-            isMounted = false;
-        };
     }, [server.id]);
+
+    const handleRefresh = () => {
+        checkStatus();
+    };
 
     // Use dummy values for layout while loading to prevent layout shift
     const displayStatus = status || { online: false, workflowCount: 0, activeWorkflowCount: 0 };
 
-    // While loading, we show the card content but blurred, with a loader on top.
-    // If not loading, we show clear content.
-
     return (
-        <Link href={`/servers/${server.id}`} className="block h-full group">
-            <Card className="h-full relative overflow-hidden border-border bg-card hover:shadow-lg transition-all duration-300">
+        <Card className="h-full relative overflow-hidden border-border bg-card hover:shadow-lg transition-all duration-300 group">
+            <Link href={`/servers/${server.id}`} className="block h-full">
 
                 {/* 1. Loading State Overlay */}
                 {isLoading && (
@@ -143,7 +139,16 @@ export function ServerCard({ server }: ServerCardProps) {
                         </p>
                     )}
                 </div>
-            </Card>
-        </Link>
+            </Link>
+
+            {/* Refresh Button - Bottom Right, Absolute, over everything else, visible on hover */}
+            <div className="absolute bottom-4 right-4 z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <RefreshServerButton
+                    serverId={server.id}
+                    onRefresh={handleRefresh}
+                    className="bg-background border border-border shadow-md hover:bg-accent"
+                />
+            </div>
+        </Card>
     );
 }

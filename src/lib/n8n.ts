@@ -68,7 +68,7 @@ export async function getN8nVersionInfo(baseUrl: string, apiKey: string): Promis
             const res = await fetch(`${cleanUrl}/api/v1/workflows?limit=1`, {
                 method: 'GET',
                 headers: { 'X-N8N-API-KEY': apiKey },
-                next: { revalidate: 0 },
+                next: { revalidate: 60 },
                 signal: controller.signal,
             });
 
@@ -81,7 +81,7 @@ export async function getN8nVersionInfo(baseUrl: string, apiKey: string): Promis
         if (!version) {
             try {
                 const healthRes = await fetch(`${cleanUrl}/healthz`, {
-                    next: { revalidate: 0 },
+                    next: { revalidate: 60 },
                     signal: controller.signal
                 });
                 version = healthRes.headers.get('x-n8n-version') || undefined;
@@ -92,7 +92,7 @@ export async function getN8nVersionInfo(baseUrl: string, apiKey: string): Promis
         if (!version) {
             try {
                 const rootRes = await fetch(`${cleanUrl}/`, {
-                    next: { revalidate: 0 },
+                    next: { revalidate: 60 },
                     signal: controller.signal
                 });
 
@@ -157,7 +157,7 @@ export async function getServerStatus(baseUrl: string, apiKey: string): Promise<
             headers: {
                 'X-N8N-API-KEY': apiKey,
             },
-            next: { revalidate: 0 },
+            next: { revalidate: 60 },
             signal: controller.signal,
         });
         clearTimeout(timeoutId);

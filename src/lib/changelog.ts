@@ -6,6 +6,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.8.1",
+        date: "2025-12-10",
+        changes: [
+            "Performance: Switched dashboard server loading from batch to individual streams for instant partial rendering",
+            "Performance: Eliminated 'waterfall' loading effect on dashboard",
+            "Code Cleanup: Removed deprecated batch fetching logic from actions",
+            "Refactor: Simplified ServerCard state management"
+        ]
+    },
+    {
         version: "0.8.0",
         date: "2025-12-09",
         changes: [
@@ -147,4 +157,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.8.0";
+export const CURRENT_VERSION = "0.8.1";
