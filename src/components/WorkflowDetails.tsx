@@ -26,6 +26,8 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
     const [isActive, setIsActive] = useState(workflow.active);
     const [statusLoading, setStatusLoading] = useState(false);
 
+    const isArchived = workflow.archived === true || (workflow.tags && workflow.tags.some((t: any) => t.name.toLowerCase() === "archived"));
+
     // Full Workflow Data (fetched on demand)
     const [fullWorkflow, setFullWorkflow] = useState<any>(null);
     const [loadingFullWorkflow, setLoadingFullWorkflow] = useState(false);
@@ -53,8 +55,6 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
     const [targetServerId, setTargetServerId] = useState("");
     const [cloning, setCloning] = useState(false);
 
-    // GitHub State
-    // const [pushingToGithub, setPushingToGithub] = useState(false); // Removed as per instruction
 
     const ensureFullWorkflow = async () => {
         if (fullWorkflow) return fullWorkflow;
@@ -389,15 +389,24 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
             <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-card p-6 rounded-xl border border-border shadow-sm">
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                        <Switch
-                            checked={isActive}
-                            onCheckedChange={handleToggleActive}
-                            disabled={statusLoading}
-                            className={cn(isActive ? "data-[state=checked]:bg-green-500" : "")}
-                        />
-                        <span className={cn("text-sm font-medium uppercase tracking-wider", isActive ? "text-green-500" : "text-muted-foreground")}>
-                            {isActive ? "Active" : "Inactive"}
-                        </span>
+                        {isArchived ? (
+                            <span className="px-3 py-1.5 rounded-md bg-orange-500/10 border border-orange-500/20 text-orange-500 text-sm font-bold uppercase tracking-wider flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="5" x="2" y="3" rx="1" /><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8" /><path d="M10 12h4" /></svg>
+                                Archived
+                            </span>
+                        ) : (
+                            <>
+                                <Switch
+                                    checked={isActive}
+                                    onCheckedChange={handleToggleActive}
+                                    disabled={statusLoading}
+                                    className={cn(isActive ? "data-[state=checked]:bg-green-500" : "")}
+                                />
+                                <span className={cn("text-sm font-medium uppercase tracking-wider", isActive ? "text-green-500" : "text-muted-foreground")}>
+                                    {isActive ? "Active" : "Inactive"}
+                                </span>
+                            </>
+                        )}
                     </div>
                 </div>
                 <div className="flex gap-3 flex-wrap">
@@ -407,6 +416,7 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
                             Save as Template
                         </Button>
                     )}
+
                     {features.cross_server_cloning && (
                         <Button variant="outline" onClick={() => setCloneDialogOpen(true)} className="gap-2">
                             <ExternalLink size={16} />

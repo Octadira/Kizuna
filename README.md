@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.8.1-blue.svg)
+![Version](https://img.shields.io/badge/version-0.8.2-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -86,7 +86,34 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 
 ---
 
+## Known Issues
+
+### Archived Workflows Not Detected
+
+**Issue:** Workflows that are marked as "Archived" in n8n instances may still appear in Kizuna's workflow list and show as "Inactive" instead of displaying an "Archived" badge.
+
+**Root Cause:**
+- The n8n public API (`GET /workflows`) does not include workflow tags in its list response.
+- Tags (including "Archived") are only available when fetching each workflow individually via `GET /workflows/{id}`.
+- Fetching individual details for every workflow would cause significant performance degradation (N+1 query problem) and is not feasible for servers with many workflows.
+
+**Current Behavior:**
+- Archived workflows appear in the "Archived / Inactive" tab.
+- They display an "Inactive" toggle instead of an "Archived" badge.
+- The badge will appear correctly only if the n8n API includes the `archived` property or tags in the list endpoint in future versions.
+
+**Workaround:**
+If you need to identify archived workflows, you can manually check them in the n8n UI or add a custom tag that follows a specific naming convention.
+
+---
+
 ## Changelog
+
+### v0.8.2 (2025-12-10)
+*   **Cleanup:** Removed archive/unarchive functionality due to n8n API limitations.
+*   **Cleanup:** Removed unused archiving functions from codebase.
+*   **Documentation:** Added "Known Issues" section to README.
+*   **Fix:** Case-insensitive tag matching for archived workflow detection.
 
 ### v0.8.1 (2025-12-10)
 *   **Performance:** Switched to individual streaming server status for instant dashboard loading.

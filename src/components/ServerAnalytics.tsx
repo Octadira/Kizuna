@@ -78,12 +78,12 @@ export function ServerAnalytics({ executions }: ServerAnalyticsProps) {
                 </Card>
             </div>
 
-            {recentFailures.length > 0 && (
-                <Card className="p-6 bg-card border-border">
-                    <h3 className="text-lg font-medium text-foreground mb-4 flex items-center gap-2">
-                        <AlertCircle size={18} className="text-red-500" />
-                        Recent Failures
-                    </h3>
+            <Card className="p-6 bg-card border-border">
+                <h3 className="text-lg font-medium text-foreground mb-4 flex items-center gap-2">
+                    <AlertCircle size={18} className="text-red-500" />
+                    Recent Failures
+                </h3>
+                {recentFailures.length > 0 ? (
                     <div className="space-y-3">
                         {recentFailures.map((exec) => (
                             <div key={exec.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border">
@@ -105,8 +105,12 @@ export function ServerAnalytics({ executions }: ServerAnalyticsProps) {
                             </div>
                         ))}
                     </div>
-                </Card>
-            )}
+                ) : (
+                    <div className="text-center py-6 text-muted-foreground text-sm border border-dashed rounded-lg bg-muted/30">
+                        No recent failures recorded.
+                    </div>
+                )}
+            </Card>
         </div>
     );
 }

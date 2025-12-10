@@ -213,7 +213,7 @@ export async function getN8nWorkflows(baseUrl: string, apiKey: string, fetchDeta
             headers: {
                 'X-N8N-API-KEY': apiKey,
             },
-            next: { revalidate: 0 }, // Disable cache to get latest status
+            next: { revalidate: 60 },
             signal: controller.signal,
         });
         clearTimeout(timeoutId);
@@ -237,6 +237,7 @@ export async function getN8nWorkflows(baseUrl: string, apiKey: string, fetchDeta
                         // We'll look for 'description' property.
                         return {
                             ...wf,
+                            tags: details?.tags || wf.tags,
                             description: details?.description || undefined
                         };
                     } catch (e) {
@@ -249,8 +250,8 @@ export async function getN8nWorkflows(baseUrl: string, apiKey: string, fetchDeta
 
         return workflows;
     } catch (error) {
-        console.error("n8n API Error:", error);
-        throw error;
+        console.error("n8n Connection Error:", error);
+        return [];
     }
 }
 
@@ -302,9 +303,10 @@ export async function getExecutions(baseUrl: string, apiKey: string, limit: numb
     const cleanUrl = baseUrl.replace(/\/$/, "");
     try {
         const query = `limit=${limit}${workflowId ? `&workflowId=${workflowId}` : ''}`;
+
         const res = await fetch(`${cleanUrl}/api/v1/executions?${query}`, {
             headers: { 'X-N8N-API-KEY': apiKey },
-            next: { revalidate: 10 }, // Cache for 10 seconds
+            next: { revalidate: 10 }, // 10s cache
         });
 
         if (!res.ok) {
@@ -312,7 +314,8 @@ export async function getExecutions(baseUrl: string, apiKey: string, limit: numb
         }
 
         const data = await res.json();
-        return data.data || [];
+        const executions = data.data || [];
+        return executions;
     } catch (error) {
         console.error("n8n Get Executions Error:", error);
         return [];

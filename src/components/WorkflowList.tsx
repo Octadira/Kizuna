@@ -24,11 +24,17 @@ export function WorkflowList({ workflows, serverId, serverUrl, favoriteIds }: Wo
         const matchesSearch = workflow.name.toLowerCase().includes(search.toLowerCase()) ||
             (workflow.tags && workflow.tags.some((t: any) => t.name.toLowerCase().includes(search.toLowerCase())));
 
-        const matchesTab = activeTab === "all"
-            ? true
-            : activeTab === "active"
-                ? workflow.active
-                : !workflow.active; // Inactive tab captures "archived" (inactive) workflows
+        const isArchived = workflow.archived === true || (workflow.tags && workflow.tags.some((t: any) => t.name.toLowerCase() === "archived"));
+
+        let matchesTab = false;
+        if (activeTab === "active") {
+            matchesTab = workflow.active && !isArchived;
+        } else if (activeTab === "inactive") {
+            matchesTab = !workflow.active || isArchived;
+        } else {
+            // All tab
+            matchesTab = true;
+        }
 
         return matchesSearch && matchesTab;
     });

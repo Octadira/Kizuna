@@ -2,7 +2,7 @@
 
 import { Card } from "./ui/Card";
 import { Button } from "./ui/Button";
-import { Star, ExternalLink, ArrowRight } from "lucide-react";
+import { Star, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { toggleFavorite, toggleWorkflowStatus } from "@/app/actions";
 import { useState } from "react";
@@ -14,6 +14,7 @@ interface WorkflowCardProps {
         id: string;
         name: string;
         active: boolean;
+        archived?: boolean;
         tags: { id: string; name: string }[];
         description?: string;
         updatedAt: string;
@@ -28,6 +29,8 @@ export function WorkflowCard({ workflow, serverId, serverUrl, isFavorite: initia
     const [isActive, setIsActive] = useState(workflow.active);
     const [loading, setLoading] = useState(false);
     const [statusLoading, setStatusLoading] = useState(false);
+
+    const isArchived = workflow.archived === true || (workflow.tags && workflow.tags.some(t => t.name.toLowerCase() === "archived"));
 
     const handleToggleFavorite = async () => {
         setLoading(true);
@@ -61,25 +64,35 @@ export function WorkflowCard({ workflow, serverId, serverUrl, isFavorite: initia
             <div>
                 <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-2">
-                        <Switch
-                            checked={isActive}
-                            onCheckedChange={handleToggleActive}
-                            disabled={statusLoading}
-                            className={cn(isActive ? "data-[state=checked]:bg-green-500" : "")}
-                        />
-                        <span className={cn("text-xs font-medium uppercase tracking-wider", isActive ? "text-green-500" : "text-muted-foreground")}>
-                            {isActive ? "Active" : "Inactive"}
-                        </span>
+                        {isArchived ? (
+                            <span className="px-2 py-1 rounded-md bg-orange-500/10 border border-orange-500/20 text-orange-500 text-xs font-bold uppercase tracking-wider">
+                                Archived
+                            </span>
+                        ) : (
+                            <>
+                                <Switch
+                                    checked={isActive}
+                                    onCheckedChange={handleToggleActive}
+                                    disabled={statusLoading}
+                                    className={cn(isActive ? "data-[state=checked]:bg-green-500" : "")}
+                                />
+                                <span className={cn("text-xs font-medium uppercase tracking-wider", isActive ? "text-green-500" : "text-muted-foreground")}>
+                                    {isActive ? "Active" : "Inactive"}
+                                </span>
+                            </>
+                        )}
                     </div>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleToggleFavorite}
-                        disabled={loading}
-                        className={cn("hover:bg-muted -mt-1 -mr-2", isFavorite ? "text-yellow-500" : "text-muted-foreground")}
-                    >
-                        <Star size={18} fill={isFavorite ? "currentColor" : "none"} />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={handleToggleFavorite}
+                            disabled={loading}
+                            className={cn("hover:bg-muted", isFavorite ? "text-yellow-500" : "text-muted-foreground")}
+                        >
+                            <Star size={18} fill={isFavorite ? "currentColor" : "none"} />
+                        </Button>
+                    </div>
                 </div>
 
                 <h3 className="font-semibold text-lg text-card-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">

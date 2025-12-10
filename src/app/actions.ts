@@ -95,6 +95,7 @@ export async function toggleWorkflowStatus(serverId: string, workflowId: string,
     await toggleN8nWorkflowActive(server.url, apiKey, workflowId, isActive);
 
     revalidatePath(`/servers/${serverId}`);
+    revalidatePath(`/servers/${serverId}`);
 }
 
 export async function saveWorkflowNote(serverId: string, workflowId: string, note: string) {

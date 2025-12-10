@@ -59,6 +59,7 @@ export default async function ServerPage({ params }: PageProps) {
             id: wf.id,
             name: wf.name,
             active: wf.active,
+            archived: wf.archived,
             tags: wf.tags,
             description: wf.description,
             createdAt: wf.createdAt,

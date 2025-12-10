@@ -6,6 +6,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.8.2",
+        date: "2025-12-10",
+        changes: [
+            "Cleanup: Removed archive/unarchive functionality (API limitations)",
+            "Cleanup: Removed unused archiving functions from codebase",
+            "Documentation: Added 'Known Issues' section to README",
+            "Fix: Case-insensitive tag matching for archived workflow detection"
+        ]
+    },
+    {
         version: "0.8.1",
         date: "2025-12-10",
         changes: [
@@ -157,4 +167,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.8.1";
+export const CURRENT_VERSION = "0.8.2";
