@@ -310,3 +310,32 @@ body {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
+
+/* Logo container with dark background for light themes */
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 0.5rem;
+  padding: 0.375rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  transition: all 0.2s ease;
+}
+
+.logo-container:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  transform: scale(1.02);
+}
+
+/* Hide dark background in dark mode - logo is already visible */
+.dark .logo-container {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.dark .logo-container:hover {
+  box-shadow: none;
+  transform: none;
+}

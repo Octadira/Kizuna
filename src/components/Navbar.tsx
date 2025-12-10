@@ -43,11 +43,13 @@ export function Navbar() {
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 left-0 right-0 h-16 border-b border-border bg-background/80 backdrop-blur-md z-40 flex items-center justify-between px-4">
                 <div className="flex items-center gap-2">
-                    <img
-                        src="/kizuna-logo-sm.webp"
-                        alt="Kizuna Logo"
-                        className="h-8 w-auto"
-                    />
+                    <div className="logo-container">
+                        <img
+                            src="/kizuna-logo-sm.webp"
+                            alt="Kizuna Logo"
+                            className="h-7 w-auto"
+                        />
+                    </div>
                     <span className="text-xl font-bold tracking-tight text-foreground">Kizuna</span>
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -78,20 +80,24 @@ export function Navbar() {
                         "flex items-center gap-2 overflow-hidden whitespace-nowrap",
                         isCollapsed ? "md:hidden" : "flex"
                     )}>
-                        <img
-                            src="/kizuna-logo-sm.webp"
-                            alt="Kizuna Logo"
-                            className="h-8 w-auto min-w-8"
-                        />
+                        <div className="logo-container">
+                            <img
+                                src="/kizuna-logo-sm.webp"
+                                alt="Kizuna Logo"
+                                className="h-7 w-auto"
+                            />
+                        </div>
                         <span className="text-xl font-bold tracking-tight text-sidebar-foreground transition-opacity duration-300">Kizuna</span>
                     </div>
 
                     {/* Icon Only Logo - visible only on desktop if collapsed */}
-                    <img
-                        src="/kizuna-logo-sm.webp"
-                        alt="Kizuna Logo"
-                        className={cn("h-8 w-auto min-w-8 hidden", isCollapsed && "md:block")}
-                    />
+                    <div className={cn("logo-container hidden", isCollapsed && "md:flex")}>
+                        <img
+                            src="/kizuna-logo-sm.webp"
+                            alt="Kizuna Logo"
+                            className="h-7 w-auto"
+                        />
+                    </div>
 
                     {/* Desktop Toggle Button - visible only when NOT collapsed */}
                     {!isCollapsed && (
