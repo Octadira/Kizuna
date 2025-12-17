@@ -68,7 +68,7 @@ export function WorkflowList({ workflows, serverId, serverUrl, favoriteIds }: Wo
                         )}
                     >
                         <CheckCircle2 size={16} className={activeTab === "active" ? "text-green-500" : ""} />
-                        Active
+                        Published
                         <span className="bg-muted-foreground/10 px-1.5 py-0.5 rounded text-xs ml-1">{activeCount}</span>
                     </button>
                     <button
@@ -81,7 +81,7 @@ export function WorkflowList({ workflows, serverId, serverUrl, favoriteIds }: Wo
                         )}
                     >
                         <Archive size={16} className={activeTab === "inactive" ? "text-orange-500" : ""} />
-                        Archived / Inactive
+                        Unpublished / Archived
                         <span className="bg-muted-foreground/10 px-1.5 py-0.5 rounded text-xs ml-1">{inactiveCount}</span>
                     </button>
                     <button

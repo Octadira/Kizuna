@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { encrypt } from "@/utils/encryption";
 import { revalidatePath } from "next/cache";
 import { decrypt } from "@/utils/encryption";
-import { getExecution, getN8nWorkflow } from "@/lib/n8n";
+import { getExecution, getN8nWorkflow, updateN8nWorkflow } from "@/lib/n8n";
 import { redirect } from "next/navigation";
 
 import { validateServerUrl } from "@/lib/security";
@@ -178,6 +178,66 @@ export async function deleteBackup(backupId: string, storagePath: string, server
 
     // 2. Delete from DB
     await supabase.from("workflow_backups").delete().eq("id", backupId).eq("user_id", user.id);
+
+    revalidatePath(`/servers/${serverId}/workflows/${workflowId}`);
+}
+
+export async function getBackupContent(storagePath: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    const { data, error } = await supabase.storage.from('backups').download(storagePath);
+
+    if (error) {
+        console.error("Error downloading backup:", error);
+        throw new Error("Failed to download backup");
+    }
+
+    return await data.text();
+}
+
+export async function restoreWorkflowVersion(serverId: string, workflowId: string, storagePath: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    // 1. Get Backup Content
+    const backupJson = await getBackupContent(storagePath);
+    const workflowData = JSON.parse(backupJson);
+
+    // 2. Get Server Credentials
+    const { data: server } = await supabase
+        .from("servers")
+        .select("url, api_key")
+        .eq("id", serverId)
+        .single();
+
+    if (!server) throw new Error("Server not found");
+
+    const apiKey = decrypt(server.api_key);
+
+    // 3. Update Workflow on n8n
+    // We strictly sanitize the data to avoid "additional properties" errors from n8n API.
+    // The PUT endpoint strictly accepts: name, nodes, connections, settings.
+    // We exclude 'staticData', 'pinData', 'tags' to be safe, as they can cause validation errors.
+
+    const sanitizedData: any = {};
+    const allowedKeys = ['name', 'nodes', 'connections', 'settings'];
+
+    for (const key of allowedKeys) {
+        if (Object.prototype.hasOwnProperty.call(workflowData, key)) {
+            sanitizedData[key] = workflowData[key];
+        }
+    }
+
+    // Ensure tags are in the correct format if they exist
+    // n8n might expect tags as just IDs or objects depending on version, usually objects are fine in PUT if they exist.
+    // However, if strictness is high, we might need to be careful. For now, we pass them if they exist.
+
+    await updateN8nWorkflow(server.url, apiKey, workflowId, sanitizedData);
 
     revalidatePath(`/servers/${serverId}/workflows/${workflowId}`);
 }

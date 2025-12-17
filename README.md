@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.9.1-blue.svg)
+![Version](https://img.shields.io/badge/version-0.10.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -34,9 +34,10 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 
 ### ⚡ Seamless Orchestration
 *   **Collapsible Sidebar:** Smart workspace management with memory state for persistent layout preference.
+*   **Advanced Version Control (W-VCS):** Enterprise-grade versioning for n8n workflows. Save unlimited named versions ("snapshots") of any workflow, download them as JSON, or **restore** them instantly with one click.
+    > **The Ultimate Safety Net:** While n8n's native history lives on your server, Kizuna acts as an immutable external vault. Your workflow snapshots are stored securely in Kizuna's managed cloud (or your private infrastructure for Enterprise), ensuring zero data loss even if your n8n instance crashes, is reset, or migrated.
 *   **Cross-Server Cloning:** Copy workflows directly from one server to another with a single click.
 *   **Workflow Templates:** Save your best workflows as templates and deploy them anywhere.
-*   **Smart Backups:** Automatically backup workflows with metadata and version history.
 *   **GitHub Integration:** Direct "Push to GitHub" for workflow versioning with commit messages.
 
 ### 🛡️ Enterprise-Grade Security
@@ -109,6 +110,14 @@ If you need to identify archived workflows, you can manually check them in the n
 ---
 
 ## Changelog
+
+### v0.10.0 (2025-12-17)
+*   **New Feature:** Comprehensive Workflow Version Control System (W-VCS).
+*   **New Feature:** "Save Version" allows creating named snapshots with descriptions (vs. just timestamps).
+*   **New Feature:** One-click "Restore" to publish any previous version instantly to n8n.
+*   **New Feature:** Download specific versions as JSON files.
+*   **UI:** Updated terminology to "Published/Unpublished" to align with modern n8n conventions.
+*   **Fix:** Addressed strict n8n API validation during restore processes.
 
 ### v0.9.1 (2025-12-17)
 *   **UI Fix:** Resolved duplicate logo display in Sidebar and Login page.

@@ -6,6 +6,18 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.10.0",
+        date: "2025-12-17",
+        changes: [
+            "Feature: Comprehensive Workflow Version Control System (W-VCS)",
+            "Feature: 'Save Version' with custom naming/description for better version identification",
+            "Feature: Restore any previous workflow version directly to n8n with one click",
+            "Feature: Download specific version snapshots as JSON",
+            "UI: Updated terminology to match n8n 2.x (Published/Unpublished instead of Active/Inactive)",
+            "Fix: Strict data sanitization during restore to prevent n8n API validation errors"
+        ]
+    },
+    {
         version: "0.9.1",
         date: "2025-12-17",
         changes: [
@@ -188,4 +200,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.9.1";
+export const CURRENT_VERSION = "0.10.0";

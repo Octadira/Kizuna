@@ -369,3 +369,27 @@ export async function createN8nWorkflow(baseUrl: string, apiKey: string, workflo
         throw error;
     }
 }
+
+export async function updateN8nWorkflow(baseUrl: string, apiKey: string, workflowId: string, workflowData: any): Promise<any> {
+    const cleanUrl = baseUrl.replace(/\/$/, "");
+    try {
+        const res = await fetch(`${cleanUrl}/api/v1/workflows/${workflowId}`, {
+            method: 'PUT',
+            headers: {
+                'X-N8N-API-KEY': apiKey,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(workflowData),
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`Failed to update workflow: ${res.status} ${errorText}`);
+        }
+
+        return await res.json();
+    } catch (error) {
+        console.error("n8n Update Workflow Error:", error);
+        throw error;
+    }
+}

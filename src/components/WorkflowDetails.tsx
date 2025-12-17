@@ -5,7 +5,7 @@ import { Button } from "./ui/Button";
 import { Card } from "./ui/Card";
 import { Switch } from "./ui/Switch";
 import { Download, Activity, FileJson, Info, ExternalLink, Webhook, Copy, StickyNote, Loader2, Trash2, Save, Github } from "lucide-react";
-import { toggleWorkflowStatus, saveWorkflowNote, saveWorkflowBackup, deleteBackup, fetchExecutionDetails, saveWorkflowTemplate, deployWorkflowToServer, fetchFullWorkflow, pushWorkflowToGithubAction } from "@/app/actions";
+import { toggleWorkflowStatus, saveWorkflowNote, saveWorkflowBackup, deleteBackup, fetchExecutionDetails, saveWorkflowTemplate, deployWorkflowToServer, fetchFullWorkflow, pushWorkflowToGithubAction, getBackupContent, restoreWorkflowVersion } from "@/app/actions";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./ui/Dialog";
 import { Input } from "./ui/Input";
@@ -38,8 +38,32 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
 
     // Backup State
     const [backingUp, setBackingUp] = useState(false);
+    const [restoring, setRestoring] = useState<string | null>(null);
+    const [saveVersionDialogOpen, setSaveVersionDialogOpen] = useState(false);
+    const [versionName, setVersionName] = useState("");
 
-    // Execution Details State
+    const handleOpenSaveVersionDialog = () => {
+        setVersionName(`${workflow.name} - ${new Date().toLocaleDateString()}`);
+        setSaveVersionDialogOpen(true);
+    };
+
+    const handleConfirmSaveVersion = async () => {
+        setBackingUp(true);
+        try {
+            const wf = await ensureFullWorkflow();
+            if (!wf) return;
+            // Use the custom name provided by the user
+            await saveWorkflowBackup(serverId, workflow.id, versionName, wf);
+            setSaveVersionDialogOpen(false);
+            alert("Version saved successfully!");
+        } catch (error) {
+            console.error("Failed to create backup", error);
+            alert("Failed to save version.");
+        } finally {
+            setBackingUp(false);
+        }
+    };
+
     const [selectedExecution, setSelectedExecution] = useState<any>(null);
     const [executionLoading, setExecutionLoading] = useState(false);
     const [executionDialogOpen, setExecutionDialogOpen] = useState(false);
@@ -181,11 +205,41 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
     };
 
     const handleDeleteBackup = async (id: string, path: string) => {
-        if (!confirm("Are you sure you want to delete this backup?")) return;
+        if (!confirm("Are you sure you want to delete this version?")) return;
         try {
             await deleteBackup(id, path, serverId, workflow.id);
         } catch (error) {
             console.error("Failed to delete backup", error);
+        }
+    };
+
+    const handleDownloadVersion = async (path: string, name: string) => {
+        try {
+            const content = await getBackupContent(path);
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(content);
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `${name}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        } catch (error) {
+            console.error("Failed to download version", error);
+            alert("Failed to download version.");
+        }
+    };
+
+    const handleRestoreVersion = async (backupId: string, path: string) => {
+        if (!confirm("Are you sure you want to restore/publish this version? This will overwrite the current live workflow.")) return;
+        setRestoring(backupId);
+        try {
+            await restoreWorkflowVersion(serverId, workflow.id, path);
+            alert("Version restored and published successfully!");
+        } catch (error) {
+            console.error("Failed to restore version", error);
+            alert("Failed to restore version.");
+        } finally {
+            setRestoring(null);
         }
     };
 
@@ -223,6 +277,35 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
 
     return (
         <div className="space-y-6">
+            {/* Save Version Dialog */}
+            <Dialog open={saveVersionDialogOpen} onOpenChange={setSaveVersionDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Save New Version</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Version Name / Description</label>
+                            <Input
+                                value={versionName}
+                                onChange={(e) => setVersionName(e.target.value)}
+                                placeholder="e.g. v1.0 - Initial Release"
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Give this version a meaningful name to easily identify it later.
+                            </p>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setSaveVersionDialogOpen(false)}>Cancel</Button>
+                        <Button onClick={handleConfirmSaveVersion} disabled={backingUp}>
+                            {backingUp && <Loader2 className="animate-spin mr-2" size={14} />}
+                            Save Version
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             {/* GitHub Push Dialog */}
             <Dialog open={pushDialogOpen} onOpenChange={setPushDialogOpen}>
                 <DialogContent>
@@ -403,7 +486,7 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
                                     className={cn(isActive ? "data-[state=checked]:bg-green-500" : "")}
                                 />
                                 <span className={cn("text-sm font-medium uppercase tracking-wider", isActive ? "text-green-500" : "text-muted-foreground")}>
-                                    {isActive ? "Active" : "Inactive"}
+                                    {isActive ? "Published" : "Unpublished"}
                                 </span>
                             </>
                         )}
@@ -423,9 +506,9 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
                             Clone to Server
                         </Button>
                     )}
-                    <Button variant="outline" onClick={handleCreateBackup} disabled={backingUp || loadingFullWorkflow} className="gap-2">
+                    <Button variant="outline" onClick={handleOpenSaveVersionDialog} disabled={backingUp || loadingFullWorkflow} className="gap-2">
                         {(backingUp || loadingFullWorkflow) ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-                        Save Backup
+                        Save Version
                     </Button>
                     {features.github_sync && (
                         <Button variant="outline" onClick={openPushDialog} disabled={loadingFullWorkflow} className="gap-2">
@@ -512,7 +595,7 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
                             : "border-transparent text-muted-foreground hover:text-foreground"
                     )}
                 >
-                    <Save size={16} /> Backups
+                    <Save size={16} /> Versions
                 </button>
                 <button
                     onClick={() => setActiveTab("json")}
@@ -588,7 +671,7 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
                     <Card className="overflow-hidden">
                         <div className="p-4 border-b border-border bg-muted/30">
                             <p className="text-sm text-muted-foreground">
-                                Backups are stored securely in Supabase Storage. You can restore them by downloading the JSON and importing it into n8n.
+                                Versions are stored securely in Secure Storage. You can restore them by downloading the JSON and importing it into n8n.
                             </p>
                         </div>
                         <div className="overflow-x-auto">
@@ -604,7 +687,7 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
                                     {backups.length === 0 ? (
                                         <tr>
                                             <td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">
-                                                No backups found. Create one to get started.
+                                                No versions found. Create one to get started.
                                             </td>
                                         </tr>
                                     ) : (
@@ -615,7 +698,18 @@ export function WorkflowDetails({ workflow, executions, serverId, serverUrl, ini
                                                 </td>
                                                 <td className="px-4 py-3 font-medium">{backup.workflow_name}</td>
                                                 <td className="px-4 py-3 text-right flex justify-end gap-2">
-                                                    {/* We can add download logic here if we generate signed URLs */}
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-muted-foreground hover:text-foreground"
+                                                        onClick={() => handleRestoreVersion(backup.id, backup.storage_path)}
+                                                        disabled={restoring === backup.id}
+                                                    >
+                                                        {restoring === backup.id ? <Loader2 className="animate-spin" size={14} /> : "Restore"}
+                                                    </Button>
+                                                    <Button variant="ghost" size="icon" className="text-primary hover:text-primary hover:bg-primary/10" onClick={() => handleDownloadVersion(backup.storage_path, backup.workflow_name)}>
+                                                        <Download size={16} />
+                                                    </Button>
                                                     <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDeleteBackup(backup.id, backup.storage_path)}>
                                                         <Trash2 size={16} />
                                                     </Button>

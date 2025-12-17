@@ -77,7 +77,7 @@ export function WorkflowCard({ workflow, serverId, serverUrl, isFavorite: initia
                                     className={cn(isActive ? "data-[state=checked]:bg-green-500" : "")}
                                 />
                                 <span className={cn("text-xs font-medium uppercase tracking-wider", isActive ? "text-green-500" : "text-muted-foreground")}>
-                                    {isActive ? "Active" : "Inactive"}
+                                    {isActive ? "Published" : "Unpublished"}
                                 </span>
                             </>
                         )}
