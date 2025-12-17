@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/Card";
 import { Activity, Layers, Clock, AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { fetchServerStatus } from "@/app/actions";
 import { cn } from "@/lib/utils";
 import { RefreshServerButton } from "./RefreshServerButton";
 
@@ -15,6 +14,7 @@ interface ServerCardProps {
         url: string;
         description?: string;
     };
+    index?: number; // Optional index for staggered loading
 }
 
 export interface ServerStatus {
@@ -25,7 +25,7 @@ export interface ServerStatus {
     updateAvailable?: boolean;
 }
 
-export function ServerCard({ server }: ServerCardProps) {
+export function ServerCard({ server, index = 0 }: ServerCardProps) {
     const [status, setStatus] = useState<ServerStatus | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [latency, setLatency] = useState<number | null>(null);
@@ -35,7 +35,9 @@ export function ServerCard({ server }: ServerCardProps) {
         setIsLoading(true);
         const startTime = performance.now();
         try {
-            const result = await fetchServerStatus(server.id);
+            // Use API route instead of server action for true parallel execution
+            const response = await fetch(`/api/server-status/${server.id}`);
+            const result = await response.json();
             const endTime = performance.now();
 
             setStatus(result);
@@ -51,6 +53,7 @@ export function ServerCard({ server }: ServerCardProps) {
     };
 
     useEffect(() => {
+        // Each card fetches independently - API routes run in parallel
         checkStatus();
     }, [server.id]);
 

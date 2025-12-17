@@ -36,8 +36,8 @@ export default async function DashboardPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {servers && servers.length > 0 ? (
-                    servers.map((server) => (
-                        <ServerCard key={server.id} server={server} />
+                    servers.map((server, index) => (
+                        <ServerCard key={server.id} server={server} index={index} />
                     ))
                 ) : (
                     <Card className="col-span-full p-12 flex flex-col items-center justify-center text-center border-dashed border-2 border-muted bg-transparent shadow-none">

@@ -142,16 +142,13 @@ export async function getN8nVersionInfo(baseUrl: string, apiKey: string): Promis
     return { version, updateAvailable };
 }
 
-export async function getServerStatus(baseUrl: string, apiKey: string): Promise<ServerStatus> {
+export async function getServerStatus(baseUrl: string, apiKey: string, skipVersionCheck: boolean = false): Promise<ServerStatus> {
     const cleanUrl = baseUrl.replace(/\/$/, "");
 
-    // We run these in parallel to speed up response time
-    // One promise gets basic workflow data (critical for online status)
-    // The other gets version info (nice to have)
-
+    // Fast workflow check with reduced timeout for better UX
     const workflowPromise = (async () => {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout for faster response
 
         const res = await fetch(`${cleanUrl}/api/v1/workflows`, {
             headers: {
@@ -170,13 +167,21 @@ export async function getServerStatus(baseUrl: string, apiKey: string): Promise<
         return data.data as N8nWorkflow[];
     })();
 
-    const versionPromise = getN8nVersionInfo(baseUrl, apiKey);
-
     try {
-        // We await both outcomes
+        // If skipVersionCheck is true, only fetch workflows (for list view optimization)
+        if (skipVersionCheck) {
+            const workflows = await workflowPromise;
+            return {
+                online: true,
+                workflowCount: workflows.length,
+                activeWorkflowCount: workflows.filter(w => w.active).length,
+            };
+        }
+
+        // Full check with version info (for server detail page)
+        const versionPromise = getN8nVersionInfo(baseUrl, apiKey);
         const [workflowsResult, versionResult] = await Promise.allSettled([workflowPromise, versionPromise]);
 
-        // If workflows failed, the server is effectively offline or auth failed
         if (workflowsResult.status === 'rejected') {
             throw new Error(workflowsResult.reason);
         }

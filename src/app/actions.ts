@@ -533,7 +533,7 @@ export async function pushWorkflowToGithubAction(serverId: string, workflowId: s
 
 import { getServerStatus } from "@/lib/n8n";
 
-export async function fetchServerStatus(serverId: string) {
+export async function fetchServerStatus(serverId: string, includeVersionInfo: boolean = false) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -549,10 +549,8 @@ export async function fetchServerStatus(serverId: string) {
 
     const apiKey = decrypt(server.api_key);
 
-    // We don't catch errors here so the client can handle them (e.g. show offline status)
-    // or we can catch and return a standard "offline" object. 
-    // Let's return the status directly or throw.
-    return await getServerStatus(server.url, apiKey);
+    // Skip version check for list view (default), include it for detail page
+    return await getServerStatus(server.url, apiKey, !includeVersionInfo);
 }
 
 export async function refreshServerStatus(serverId: string) {

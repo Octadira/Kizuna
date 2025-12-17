@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.8.2-blue.svg)
+![Version](https://img.shields.io/badge/version-0.9.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -27,6 +27,7 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 ### 🚀 Centralized Management
 *   **Multi-Server Dashboard:** Monitor the health and status of unlimited n8n instances from one view.
 *   **Lightning Fast Loading:** Optimized non-blocking dashboard with individual server status streaming.
+*   **True Parallel Loading:** Each server card loads independently - slow servers don't block others.
 *   **Real-Time Analytics:** Track active workflows, execution counts, server latency, and uptime instantly.
 *   **n8n Version Detection:** See the running n8n version and get notified when updates are available.
 *   **Delete Server with Backup:** Safely remove servers with optional backup download.
@@ -108,6 +109,14 @@ If you need to identify archived workflows, you can manually check them in the n
 ---
 
 ## Changelog
+
+### v0.9.0 (2025-12-17)
+*   **Performance:** True parallel server loading via dedicated API routes.
+*   **Performance:** Each server card now loads independently - slow servers don't block others.
+*   **Performance:** Reduced n8n API timeout from 8s to 3s for faster failure detection.
+*   **Performance:** Skipped version check on server list (only shown on detail page).
+*   **Architecture:** New `/api/server-status` endpoint for non-blocking status fetching.
+*   **Fix:** Resolved Next.js server action serialization causing sequential loading.
 
 ### v0.8.2 (2025-12-10)
 *   **Cleanup:** Removed archive/unarchive functionality due to n8n API limitations.

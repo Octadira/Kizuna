@@ -6,6 +6,18 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.9.0",
+        date: "2025-12-17",
+        changes: [
+            "Performance: True parallel server loading via dedicated API routes",
+            "Performance: Each server card now loads independently - slow servers don't block others",
+            "Performance: Reduced n8n API timeout from 8s to 3s for faster failure detection",
+            "Performance: Skipped version check on server list (only shown on detail page)",
+            "Architecture: New /api/server-status endpoint for non-blocking status fetching",
+            "Fix: Resolved Next.js server action serialization causing sequential loading"
+        ]
+    },
+    {
         version: "0.8.2",
         date: "2025-12-10",
         changes: [
@@ -167,4 +179,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.8.2";
+export const CURRENT_VERSION = "0.9.0";
