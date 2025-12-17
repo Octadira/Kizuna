@@ -43,7 +43,7 @@ export function Navbar() {
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 left-0 right-0 h-16 border-b border-border bg-background/80 backdrop-blur-md z-40 flex items-center justify-between px-4">
                 <div className="flex items-center gap-2">
-                    <div className="logo-container">
+                    <div className="logo-container flex items-center justify-center">
                         <img
                             src="/kizuna-logo-sm.webp"
                             alt="Kizuna Logo"
@@ -80,7 +80,7 @@ export function Navbar() {
                         "flex items-center gap-2 overflow-hidden whitespace-nowrap",
                         isCollapsed ? "md:hidden" : "flex"
                     )}>
-                        <div className="logo-container">
+                        <div className="logo-container flex items-center justify-center">
                             <img
                                 src="/kizuna-logo-sm.webp"
                                 alt="Kizuna Logo"
@@ -91,7 +91,7 @@ export function Navbar() {
                     </div>
 
                     {/* Icon Only Logo - visible only on desktop if collapsed */}
-                    <div className={cn("logo-container hidden", isCollapsed && "md:flex")}>
+                    <div className={cn("logo-container hidden", isCollapsed && "md:flex md:items-center md:justify-center")}>
                         <img
                             src="/kizuna-logo-sm.webp"
                             alt="Kizuna Logo"
@@ -137,7 +137,7 @@ export function Navbar() {
                                     isActive
                                         ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
                                         : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
-                                    isCollapsed && "md:justify-center md:px-2"
+                                    isCollapsed && "md:justify-center md:px-2 md:gap-0"
                                 )}
                                 title={isCollapsed ? item.name : undefined}
                             >

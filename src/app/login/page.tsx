@@ -45,7 +45,7 @@ export default function LoginPage() {
 
             <Card className="w-full max-w-md p-8 relative z-10 border-border bg-card/85 backdrop-blur-xl shadow-2xl">
                 <div className="flex flex-col items-center mb-8">
-                    <div className="logo-container mb-4">
+                    <div className="logo-container flex items-center justify-center mb-4">
                         <img
                             src="/kizuna-logo-sm.webp"
                             alt="Kizuna Logo"

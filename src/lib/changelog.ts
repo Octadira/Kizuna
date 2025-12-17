@@ -6,6 +6,15 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.9.1",
+        date: "2025-12-17",
+        changes: [
+            "UI Fix: Resolved duplicate logo display in Sidebar and Login page",
+            "UI Fix: Corrected icon misalignment in collapsed sidebar state by removing ghost gaps",
+            "Styles: Refactored logo container styles to improved utility classes"
+        ]
+    },
+    {
         version: "0.9.0",
         date: "2025-12-17",
         changes: [
@@ -179,4 +188,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.9.0";
+export const CURRENT_VERSION = "0.9.1";

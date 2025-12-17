@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.9.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.9.1-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -109,6 +109,11 @@ If you need to identify archived workflows, you can manually check them in the n
 ---
 
 ## Changelog
+
+### v0.9.1 (2025-12-17)
+*   **UI Fix:** Resolved duplicate logo display in Sidebar and Login page.
+*   **UI Fix:** Corrected icon misalignment in collapsed sidebar state.
+*   **Styles:** Refactored logo container styles to improved utility classes.
 
 ### v0.9.0 (2025-12-17)
 *   **Performance:** True parallel server loading via dedicated API routes.
