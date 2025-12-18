@@ -65,7 +65,7 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/kizuna.git
+    git clone https://github.com/octadira/kizuna.git
     cd kizuna
     ```
 
