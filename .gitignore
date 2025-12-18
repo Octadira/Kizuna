@@ -40,4 +40,3 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 SECURITY_AUDIT.md
-kizuna-docs
