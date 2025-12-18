@@ -20,7 +20,7 @@
 
 Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pane of glass" visibility into your entire automation landscape, ensuring your workflows are always running, secure, and optimized.
 
-[**📚 Read the Full Documentation**](https://kizuna.space/guides/introduction/) - *Deployed URL to be added later*
+[**📚 Read the Full Documentation**](https://n8kizuna.space/guides/introduction/) - *Deployed URL to be added later*
 
 ---
 
