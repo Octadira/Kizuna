@@ -154,6 +154,11 @@ export function Navbar() {
                 </div>
 
                 <div className="mt-auto pt-4 border-t border-sidebar-border space-y-2 px-3 pb-4">
+                    {!isCollapsed && (
+                        <p className="text-[10px] text-muted-foreground/40 text-center leading-tight mb-2">
+                            Not affiliated with n8n<br />or its parent company.
+                        </p>
+                    )}
                     <div className={cn("flex items-center justify-between", isCollapsed ? "md:flex-col md:gap-4" : "")}>
                         <span className={cn("text-xs font-medium text-sidebar-foreground/50", isCollapsed ? "md:hidden" : "block")}>Theme</span>
                         <div className={cn("flex items-center gap-1", isCollapsed ? "md:flex-col" : "")}>

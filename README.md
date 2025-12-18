@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.10.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.11.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -110,6 +110,12 @@ If you need to identify archived workflows, you can manually check them in the n
 ---
 
 ## Changelog
+
+### v0.11.0 (2025-12-18)
+*   **Design:** Major UI overhaul to 'Shadow/Zinc' aesthetic for a premium, clean look distinct from n8n.
+*   **Design:** Updated default 'Dark' theme to use Zinc 950/900 palette for deeper contrast.
+*   **UX/Legal:** Added clear "Not affiliated with n8n" disclaimers in Sidebar and Login footer.
+*   **Styles:** Refined global shadows and card backgrounds for better depth in dark mode.
 
 ### v0.10.0 (2025-12-17)
 *   **New Feature:** Comprehensive Workflow Version Control System (W-VCS).

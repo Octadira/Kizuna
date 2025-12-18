@@ -111,6 +111,9 @@ export default function LoginPage() {
                     <p className="text-xs text-muted-foreground/60 font-mono">
                         v{CURRENT_VERSION}
                     </p>
+                    <p className="text-[10px] text-muted-foreground/40 mt-2">
+                        Not affiliated with n8n or its parent company.
+                    </p>
                 </div>
             </Card>
         </div>

@@ -6,6 +6,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.11.0",
+        date: "2025-12-18",
+        changes: [
+            "Design: Major UI overhaul to 'Shadow/Zinc' aesthetic for a premium, clean look distinct from n8n",
+            "Design: Updated default 'Dark' theme to use Zinc 950/900 palette (previously Slate) for deeper contrast",
+            "UX/Legal: Added clear 'Not affiliated with n8n' disclaimers in Sidebar and Login footer",
+            "Config: Changed default theme preference to 'Dark' for new users",
+            "Styles: Refined global shadows and card backgrounds for better depth in dark mode"
+        ]
+    },
+    {
         version: "0.10.0",
         date: "2025-12-17",
         changes: [
@@ -200,4 +211,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.10.0";
+export const CURRENT_VERSION = "0.11.0";
