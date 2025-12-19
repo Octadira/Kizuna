@@ -35,9 +35,9 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 *   **Delete Server with Backup:** Safely remove servers with optional backup download.
 
 ### ⚡ Seamless Orchestration
-*   **Collapsible Sidebar:** Smart workspace management with memory state for persistent layout preference.
+*   **Collapsible Sidebar:** Smart workspace management with persistent layout preference stored locally in your browser.
 *   **Advanced Version Control (W-VCS):** Enterprise-grade versioning for n8n workflows. Save unlimited named versions ("snapshots") of any workflow, download them as JSON, or **restore** them instantly with one click.
-    > **The Ultimate Safety Net:** While n8n's native history lives on your server, Kizuna acts as an immutable external vault. Your workflow snapshots are stored securely in Kizuna's managed cloud (or your private infrastructure for Enterprise), ensuring zero data loss even if your n8n instance crashes, is reset, or migrated.
+    > **The Ultimate Safety Net:** While n8n's native history lives on your n8n server, Kizuna stores your workflow snapshots in your own Supabase instance—completely separate from n8n. This provides a secure external backup layer, ensuring zero data loss even if your n8n instance crashes, is reset, or migrated. Your data stays under your control.
 *   **Cross-Server Cloning:** Copy workflows directly from one server to another with a single click.
 *   **Workflow Templates:** Save your best workflows as templates and deploy them anywhere.
 *   **GitHub Integration:** Direct "Push to GitHub" for workflow versioning with commit messages.
