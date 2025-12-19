@@ -42,8 +42,11 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 *   **Workflow Templates:** Save your best workflows as templates and deploy them anywhere.
 *   **GitHub Integration:** Direct "Push to GitHub" for workflow versioning with commit messages.
 
-### 🛡️ Enterprise-Grade Security
-*   **Role-Based Access Control (RBAC):** Granular permissions for plugin management and server access.
+### 🛡️ Security & Isolation
+*   **User Levels:** Two-tier role system:
+    - **Admin**: Full access including plugin management (enable/disable features).
+    - **User**: Standard access with personal workspace isolation.
+*   **Row-Level Security (RLS):** Each user sees only their own servers, workflows, and data. Complete data isolation enforced at the database level via Supabase RLS policies.
 *   **Secure Credential Storage:** Industry-standard AES-256 encryption for all API keys.
 *   **SSRF Protection:** Built-in safeguards against Server-Side Request Forgery attacks.
 *   **Security Audit:** Comprehensive security review (Score: 9.2/10).
