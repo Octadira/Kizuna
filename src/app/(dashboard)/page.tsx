@@ -1,10 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ServerCard } from "@/components/ServerCard";
+import { ServerGrid } from "@/components/ServerGrid";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -34,26 +33,8 @@ export default async function DashboardPage() {
                 </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {servers && servers.length > 0 ? (
-                    servers.map((server, index) => (
-                        <ServerCard key={server.id} server={server} index={index} />
-                    ))
-                ) : (
-                    <Card className="col-span-full p-12 flex flex-col items-center justify-center text-center border-dashed border-2 border-muted bg-transparent shadow-none">
-                        <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                            <Plus className="h-8 w-8 text-muted-foreground" />
-                        </div>
-                        <h3 className="text-lg font-medium text-foreground">No servers found</h3>
-                        <p className="text-muted-foreground mt-2 mb-6 max-w-sm">
-                            Connect your first n8n instance to start managing workflows.
-                        </p>
-                        <Link href="/servers/new">
-                            <Button variant="outline">Connect Server</Button>
-                        </Link>
-                    </Card>
-                )}
-            </div>
+            <ServerGrid servers={servers || []} />
         </div>
     );
 }
+

@@ -23,13 +23,14 @@ export default async function GithubSettingsPage() {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold">Settings</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
 
-            <div className="md:grid md:grid-cols-4 md:gap-8">
-                <div className="md:col-span-1">
+            <div className="flex flex-col md:grid md:grid-cols-[240px_1fr] gap-8 items-start">
+                <aside className="w-full">
                     <SettingsNav />
-                </div>
-                <div className="md:col-span-3 space-y-6">
+                </aside>
+
+                <main className="space-y-6 w-full min-w-0">
                     <div>
                         <h2 className="text-xl font-semibold mb-1">GitHub Integration</h2>
                         <p className="text-sm text-muted-foreground">
@@ -37,11 +38,14 @@ export default async function GithubSettingsPage() {
                         </p>
                     </div>
 
+                    <div className="border-t border-border/50 my-4" />
+
                     <div className="bg-card border border-border rounded-lg p-6">
                         <GithubSettingsForm initialData={initialData} />
                     </div>
-                </div>
+                </main>
             </div>
         </div>
     );
 }
+

@@ -6,6 +6,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.12.0",
+        date: "2025-12-20",
+        changes: [
+            "UI/UX: Added pagination (6 servers/page) and real-time search to dashboard for better scalability",
+            "UI/UX: Added pagination (10 workflows/page) and global search filtering to server detail pages",
+            "Settings: Complete redesign of the Settings area with a modern two-column layout",
+            "Settings: Added pagination and search functionality for Plugins",
+            "Refactor: Converted dashboard grids to client-side components for instant interaction"
+        ]
+    },
+    {
         version: "0.11.0",
         date: "2025-12-18",
         changes: [
@@ -211,4 +222,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.11.0";
+export const CURRENT_VERSION = "0.12.0";

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { WorkflowCard } from "./WorkflowCard";
 import { Input } from "./ui/Input";
 import { Search, X, LayoutGrid, CheckCircle2, Archive } from "lucide-react";
 import { Button } from "./ui/Button";
+import { Pagination } from "./ui/Pagination";
 import { cn } from "@/lib/utils";
 
 interface WorkflowListProps {
@@ -16,40 +17,68 @@ interface WorkflowListProps {
 
 type Tab = "active" | "all" | "inactive";
 
+const WORKFLOWS_PER_PAGE = 10;
+
 export function WorkflowList({ workflows, serverId, serverUrl, favoriteIds }: WorkflowListProps) {
     const [search, setSearch] = useState("");
     const [activeTab, setActiveTab] = useState<Tab>("active");
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const filteredWorkflows = workflows.filter((workflow) => {
-        const matchesSearch = workflow.name.toLowerCase().includes(search.toLowerCase()) ||
-            (workflow.tags && workflow.tags.some((t: any) => t.name.toLowerCase().includes(search.toLowerCase())));
+    // Memoize filtered and sorted workflows for performance
+    const filteredWorkflows = useMemo(() => {
+        const filtered = workflows.filter((workflow) => {
+            const matchesSearch = workflow.name.toLowerCase().includes(search.toLowerCase()) ||
+                (workflow.tags && workflow.tags.some((t: any) => t.name.toLowerCase().includes(search.toLowerCase())));
 
-        const isArchived = workflow.archived === true || (workflow.tags && workflow.tags.some((t: any) => t.name.toLowerCase() === "archived"));
+            const isArchived = workflow.archived === true || (workflow.tags && workflow.tags.some((t: any) => t.name.toLowerCase() === "archived"));
 
-        let matchesTab = false;
-        if (activeTab === "active") {
-            matchesTab = workflow.active && !isArchived;
-        } else if (activeTab === "inactive") {
-            matchesTab = !workflow.active || isArchived;
-        } else {
-            // All tab
-            matchesTab = true;
-        }
+            let matchesTab = false;
+            if (activeTab === "active") {
+                matchesTab = workflow.active && !isArchived;
+            } else if (activeTab === "inactive") {
+                matchesTab = !workflow.active || isArchived;
+            } else {
+                // All tab
+                matchesTab = true;
+            }
 
-        return matchesSearch && matchesTab;
-    });
+            return matchesSearch && matchesTab;
+        });
 
-    // Sort: Favorites first, then Name
-    filteredWorkflows.sort((a, b) => {
-        const aFav = favoriteIds.has(a.id);
-        const bFav = favoriteIds.has(b.id);
-        if (aFav && !bFav) return -1;
-        if (!aFav && bFav) return 1;
-        return a.name.localeCompare(b.name);
-    });
+        // Sort: Favorites first, then Name
+        filtered.sort((a, b) => {
+            const aFav = favoriteIds.has(a.id);
+            const bFav = favoriteIds.has(b.id);
+            if (aFav && !bFav) return -1;
+            if (!aFav && bFav) return 1;
+            return a.name.localeCompare(b.name);
+        });
+
+        return filtered;
+    }, [workflows, search, activeTab, favoriteIds]);
+
+    // Pagination calculations
+    const totalPages = Math.ceil(filteredWorkflows.length / WORKFLOWS_PER_PAGE);
+    const paginatedWorkflows = useMemo(() => {
+        const startIndex = (currentPage - 1) * WORKFLOWS_PER_PAGE;
+        return filteredWorkflows.slice(startIndex, startIndex + WORKFLOWS_PER_PAGE);
+    }, [filteredWorkflows, currentPage]);
+
+    // Reset to page 1 when search or tab changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, activeTab]);
 
     const activeCount = workflows.filter(w => w.active).length;
     const inactiveCount = workflows.length - activeCount;
+
+    const handleTabChange = (tab: Tab) => {
+        setActiveTab(tab);
+    };
+
+    const handleSearchChange = (value: string) => {
+        setSearch(value);
+    };
 
     return (
         <div className="space-y-6">
@@ -142,19 +171,31 @@ export function WorkflowList({ workflows, serverId, serverUrl, favoriteIds }: Wo
                     )}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {filteredWorkflows.map((workflow) => (
-                        <div key={workflow.id} className={cn("transition-opacity duration-300", !workflow.active && activeTab === 'all' ? "opacity-60 grayscale-[0.5] hover:opacity-100 hover:grayscale-0" : "")}>
-                            <WorkflowCard
-                                workflow={workflow}
-                                serverId={serverId}
-                                serverUrl={serverUrl}
-                                isFavorite={favoriteIds.has(workflow.id)}
-                            />
-                        </div>
-                    ))}
-                </div>
+                <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {paginatedWorkflows.map((workflow) => (
+                            <div key={workflow.id} className={cn("transition-opacity duration-300", !workflow.active && activeTab === 'all' ? "opacity-60 grayscale-[0.5] hover:opacity-100 hover:grayscale-0" : "")}>
+                                <WorkflowCard
+                                    workflow={workflow}
+                                    serverId={serverId}
+                                    serverUrl={serverUrl}
+                                    isFavorite={favoriteIds.has(workflow.id)}
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Pagination */}
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        totalItems={filteredWorkflows.length}
+                        itemsPerPage={WORKFLOWS_PER_PAGE}
+                    />
+                </>
             )}
         </div>
     );
 }
+

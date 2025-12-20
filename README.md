@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.11.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.12.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -115,6 +115,13 @@ If you need to identify archived workflows, you can manually check them in the n
 ---
 
 ## Changelog
+
+### v0.12.0 (2025-12-20)
+*   **UI/UX:** Added scalable pagination (6 servers/page) and real-time search to dashboard.
+*   **UI/UX:** Added pagination (10 workflows/page) and global search filtering to server detail pages.
+*   **Settings:** Complete redesign of the Settings area with a modern two-column layout.
+*   **Settings:** Added pagination and search functionality for Plugins.
+*   **Refactor:** Converted dashboard grids to client-side components for instant interaction.
 
 ### v0.11.0 (2025-12-18)
 *   **Design:** Major UI overhaul to 'Shadow/Zinc' aesthetic for a premium, clean look distinct from n8n.
