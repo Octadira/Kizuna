@@ -66,18 +66,35 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 
 ### Installation
 
+You can either download the latest stable release or clone the repository directly.
+
+#### Option A: Download Latest Release (Stable)
+1.  Go to the [**Releases Page**](https://github.com/octadira/kizuna/releases).
+2.  Download the **Source code (zip)** or **Source code (tar.gz)** for the latest version.
+3.  Extract the archive and navigate into the folder:
+    ```bash
+    cd kizuna-0.12.0  # Folder name may vary based on release version
+    ```
+
+#### Option B: Clone Repository (Latest Dev)
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/octadira/kizuna.git
     cd kizuna
     ```
 
-2.  **Install dependencies:**
+
+### Setup & Configuration
+
+Once you have the code (via Release or Git):
+
+1.  **Install dependencies:**
     ```bash
     npm install
     ```
 
-3.  **Environment Setup:**
+
+2.  **Environment Setup:**
     Create a `.env.local` file with your Supabase credentials:
     ```env
     NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -85,7 +102,7 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
     N8N_ENCRYPTION_KEY=your_encryption_key
     ```
 
-4.  **Run the application:**
+3.  **Run the application:**
     ```bash
     npm run dev
     ```
