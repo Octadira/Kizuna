@@ -6,6 +6,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.13.1",
+        date: "2025-12-23",
+        changes: [
+            "Config: Implemented strict SEO blocking (noindex, nofollow) for production deployments",
+            "Config: Added robots.txt generator to disallow all crawlers",
+            "Documentation: Added comprehensive 'Vercel Deployment Guide' (docs/vercel-workflow.md)",
+            "Documentation: Updated README with deployment privacy rationale"
+        ]
+    },
+    {
         version: "0.13.0",
         date: "2025-12-23",
         changes: [
@@ -234,4 +244,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.13.0";
+export const CURRENT_VERSION = "0.13.1";

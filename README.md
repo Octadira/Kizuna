@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.13.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.13.1-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -125,6 +125,17 @@ Once you have the code (via Release or Git):
    ```
    *Replace `YOUR_USER_UUID_HERE` with your actual User UID found in the Supabase Dashboard > Authentication > Users table.*
 
+5. **Deployment & Privacy (SEO Configuration)**
+   
+   Kizuna is designed as a private, secure management tool, not a public content website. Therefore, **indexing by search engines is strictly blocked by default** to ensure privacy.
+   
+   *   **Why?** As a dashboard application handling sensitive automation data, you generally do not want your login page or application structure appearing in Google search results. Public indexing provides no value for this type of tool and can unnecessarily expose your instance location.
+   *   **How?** The application is pre-configured with:
+       *   `robots.txt`: Disallows all crawlers (`User-agent: *, Disallow: /`).
+       *   `Meta Tags`: Includes `robots: noindex, nofollow` headers on all pages.
+   
+   This ensures that even if you deploy to a public URL (like `kizuna-production.vercel.app`), search engines will respect these directives and exclude your site from their index.
+
 3.  **Run the application:**
     ```bash
     npm run dev
@@ -169,6 +180,12 @@ We welcome contributions to Kizuna! Please follow these guidelines to ensure a s
 ---
 
 ## Changelog
+
+### v0.13.1 (2025-12-23)
+*   **Config:** Implemented strict **SEO Blocking** (`noindex`, `nofollow`) for production deployments.
+*   **Privacy:** Added dynamic `robots.txt` generator to explicitly disallow all search crawlers.
+*   **Rationale:** As a private management application, Kizuna is now configured to prevent search engine indexing by default, ensuring your production instance URL remains private even if publicly accessible.
+*   **Documentation:** Added detailed Vercel Deployment Guide (`docs/vercel-workflow.md`).
 
 ### v0.13.0 (2025-12-23)
 *   **Feature:** Added specialized **Admin 'Manage Users' panel**. Admins can now invite new users directly via email, listing all registered users, and deleting accounts.

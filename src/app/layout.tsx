@@ -8,6 +8,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Kizuna",
   description: "One Kizuna. All your automation. - Unified n8n Server Manager",
+  robots: {
+    index: false,
+    follow: false,
+  },
   appleWebApp: {
     title: "Kizuna",
   },
