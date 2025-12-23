@@ -131,6 +131,20 @@ If you need to identify archived workflows, you can manually check them in the n
 
 ---
 
+## Contributing
+
+We welcome contributions to Kizuna! Please follow these guidelines to ensure a smooth collaboration:
+
+1.  **Branching Strategy**:
+    *   **`dev`**: This is the designated development branch. **All** new features, bug fixes, and improvements must be implemented on and targeted to this branch.
+    *   **`main`**: This branch is reserved for stable releases only.
+
+2.  **Submitting a Pull Request**:
+    *   Please verify that your Pull Request targets the `dev` branch.
+    *   PRs targeting `main` will be closed and requested to be re-submitted against `dev`.
+
+---
+
 ## Changelog
 
 ### v0.12.0 (2025-12-20)
