@@ -60,9 +60,9 @@ export function WorkflowCard({ workflow, serverId, serverUrl, isFavorite: initia
     };
 
     return (
-        <Card className="hover:shadow-lg transition-all duration-300 group relative flex flex-col justify-between h-full p-6 bg-card border-border">
+        <Card className="hover:shadow-lg transition-all duration-300 group relative flex flex-col justify-between h-full p-5 bg-card border-border">
             <div>
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex justify-between items-start mb-3">
                     <div className="flex items-center gap-2">
                         {isArchived ? (
                             <span className="px-2 py-1 rounded-md bg-orange-500/10 border border-orange-500/20 text-orange-500 text-xs font-bold uppercase tracking-wider">
@@ -95,19 +95,19 @@ export function WorkflowCard({ workflow, serverId, serverUrl, isFavorite: initia
                     </div>
                 </div>
 
-                <h3 className="font-semibold text-lg text-card-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                <h3 className="font-semibold text-base text-card-foreground mb-1.5 line-clamp-2 group-hover:text-primary transition-colors">
                     {workflow.name}
                 </h3>
 
                 {workflow.description && (
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                    <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
                         {workflow.description}
                     </p>
                 )}
 
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-1.5 mb-3">
                     {workflow.tags.map((tag) => (
-                        <span key={tag.id} className="text-xs px-2 py-1 rounded-full bg-secondary/50 text-secondary-foreground border border-secondary">
+                        <span key={tag.id} className="text-[10px] px-2 py-0.5 rounded-full bg-secondary/50 text-secondary-foreground border border-secondary">
                             {tag.name}
                         </span>
                     ))}

@@ -73,7 +73,7 @@ export default async function ServerPage({ params }: PageProps) {
     }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <Link href="/" className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm mb-2 transition-colors">
@@ -81,7 +81,7 @@ export default async function ServerPage({ params }: PageProps) {
                         Back to Dashboard
                     </Link>
                     <div className="flex flex-wrap items-center gap-4">
-                        <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-3">
+                        <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-3">
                             {server.name}
                         </h1>
                         <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium border ${!error
@@ -135,7 +135,7 @@ export default async function ServerPage({ params }: PageProps) {
                     <p className="text-sm mt-2 opacity-80">Error: {error}</p>
                 </div>
             ) : (
-                <div className="space-y-10">
+                <div className="space-y-8">
                     {/* Analytics Section */}
                     {executions.length > 0 && (
                         <ServerAnalytics executions={executions} />
@@ -143,8 +143,8 @@ export default async function ServerPage({ params }: PageProps) {
 
                     {/* Workflows Section */}
                     <div>
-                        <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
-                            <Layers size={20} />
+                        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                            <Layers size={18} />
                             Workflows ({workflows.length})
                         </h2>
                         <WorkflowList

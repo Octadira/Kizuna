@@ -229,6 +229,9 @@ USING (true);
 -- ----------------------------------------------------------------
 
 -- 4.1 Create 'user_roles' table
+-- IMPORTANT: To access Admin features (User Management), you must have the 'admin' role.
+-- Also, the application requires SUPABASE_SERVICE_ROLE_KEY in .env.local for admin actions.
+
 CREATE TABLE IF NOT EXISTS user_roles (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
@@ -236,6 +239,11 @@ CREATE TABLE IF NOT EXISTS user_roles (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(user_id)
 );
+
+-- Helper to set first admin (Run this manually for your user)
+-- INSERT INTO public.user_roles (user_id, role)
+-- VALUES ('YOUR_USER_ID_HERE', 'admin')
+-- ON CONFLICT (user_id) DO UPDATE SET role = 'admin';
 
 -- 4.2 Enable RLS for user_roles
 ALTER TABLE user_roles ENABLE ROW LEVEL SECURITY;

@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.12.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.13.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -99,8 +99,31 @@ Once you have the code (via Release or Git):
     ```env
     NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+    
+    # Required for Admin Features (User Management)
+    SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+    
     N8N_ENCRYPTION_KEY=your_encryption_key
     ```
+    
+    
+4. **Admin Configuration**
+
+   Kizuna v0.13.0 introduces a dedicated **User Management** panel. To access this, you must have the `admin` role.
+
+   **For New Installations:**
+   After running the application for the first time, sign up (`/login` -> Sign Up) to create your first user. Then, run the SQL command below to promote this user to Admin.
+
+   **For Existing Users (Updating from < v0.13.0):**
+   If you have an existing user, simply run the SQL command below with your user's ID.
+
+   **SQL Command (Run in Supabase SQL Editor):**
+   ```sql
+   INSERT INTO public.user_roles (user_id, role)
+   VALUES ('YOUR_USER_UUID_HERE', 'admin')
+   ON CONFLICT (user_id) DO UPDATE SET role = 'admin';
+   ```
+   *Replace `YOUR_USER_UUID_HERE` with your actual User UID found in the Supabase Dashboard > Authentication > Users table.*
 
 3.  **Run the application:**
     ```bash
@@ -146,6 +169,14 @@ We welcome contributions to Kizuna! Please follow these guidelines to ensure a s
 ---
 
 ## Changelog
+
+### v0.13.0 (2025-12-23)
+*   **Feature:** Added specialized **Admin 'Manage Users' panel**. Admins can now invite new users directly via email, listing all registered users, and deleting accounts.
+*   **Feature:** Added **'My Profile' page** for all users to manage their personal details (Name) and change their password securely.
+*   **Security:** Implemented `SERVICE_ROLE_KEY` based architecture for privileged admin operations, ensuring strict separation from client-side actions.
+*   **UI/UX:** Added persistent **User Widget** in the sidebar, displaying the user's avatar (initials) and providing quick access to the profile settings.
+*   **UI/UX:** Moved the "Not Affiliated" disclaimer to a non-intrusive sticky footer at the bottom of the main layout, improving sidebar aesthetics.
+*   **Config:** Updated setup documentation with clear instructions for configuring the Admin role for both new and existing installations.
 
 ### v0.12.0 (2025-12-20)
 *   **UI/UX:** Added scalable pagination (6 servers/page) and real-time search to dashboard.

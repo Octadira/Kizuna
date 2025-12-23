@@ -78,7 +78,7 @@ export function ServerCard({ server, index = 0 }: ServerCardProps) {
                 )}
 
                 {/* 2. Status & Latency Badges (Top Right) */}
-                <div className="absolute top-4 right-4 flex items-center gap-2 z-20">
+                <div className="absolute top-3 right-3 flex items-center gap-2 z-20">
                     {/* Latency Badge - Only show when loaded */}
                     {!isLoading && !error && latency !== null && (
                         <div className="flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-medium border bg-secondary/50 text-secondary-foreground border-border animate-in fade-in slide-in-from-top-2 duration-500">
@@ -102,17 +102,17 @@ export function ServerCard({ server, index = 0 }: ServerCardProps) {
                     )}
                 </div>
 
-                <div className={cn("space-y-4 p-6 transition-opacity duration-300", isLoading ? "opacity-40" : "opacity-100")}>
+                <div className={cn("space-y-3 p-5 transition-opacity duration-300", isLoading ? "opacity-40" : "opacity-100")}>
                     {/* Icon */}
-                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-xl font-bold text-primary shadow-sm group-hover:scale-105 transition-transform duration-300">
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-lg font-bold text-primary shadow-sm group-hover:scale-105 transition-transform duration-300">
                         {server.name.substring(0, 2).toUpperCase()}
                     </div>
 
                     <div>
-                        <h3 className="text-lg font-semibold text-card-foreground group-hover:text-primary transition-colors">
+                        <h3 className="text-base font-semibold text-card-foreground group-hover:text-primary transition-colors">
                             {server.name}
                         </h3>
-                        <p className="text-sm text-muted-foreground truncate mt-1">
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">
                             {server.url}
                         </p>
                     </div>

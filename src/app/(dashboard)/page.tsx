@@ -19,15 +19,15 @@ export default async function DashboardPage() {
         .order("created_at", { ascending: false });
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground">Servers</h1>
-                    <p className="text-muted-foreground mt-1">Manage your n8n instances</p>
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Servers</h1>
+                    <p className="text-sm text-muted-foreground mt-0.5">Manage your n8n instances</p>
                 </div>
                 <Link href="/servers/new">
-                    <Button className="gap-2 shadow-md">
-                        <Plus size={18} />
+                    <Button className="gap-2 shadow-md h-9 px-4 text-sm">
+                        <Plus size={16} />
                         Add Server
                     </Button>
                 </Link>
