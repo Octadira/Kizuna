@@ -128,7 +128,7 @@ export function ServerGrid({ servers }: ServerGridProps) {
                 </div>
             ) : (
                 <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {paginatedServers.map((server, index) => (
                             <ServerCard key={server.id} server={server} index={index} />
                         ))}

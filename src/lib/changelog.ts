@@ -6,6 +6,28 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.13.1",
+        date: "2025-12-23",
+        changes: [
+            "Config: Implemented strict SEO blocking (noindex, nofollow) for production deployments",
+            "Config: Added robots.txt generator to disallow all crawlers",
+            "Documentation: Added comprehensive 'Vercel Deployment Guide' (docs/vercel-workflow.md)",
+            "Documentation: Updated README with deployment privacy rationale"
+        ]
+    },
+    {
+        version: "0.13.0",
+        date: "2025-12-23",
+        changes: [
+            "Feature: Added Admin 'Manage Users' panel (Invite, List, Delete users)",
+            "Feature: Added 'My Profile' page for managing personal details and password",
+            "Security: Implemented Service Role Key based admin operations for enhanced security",
+            "UI/UX: Added persistent User Widget in Sidebar with avatar and quick profile access",
+            "UI/UX: Moved 'Not Affiliated' disclaimer to a sticky footer in the main layout",
+            "Config: Updated setup documentation for Admin role configuration"
+        ]
+    },
+    {
         version: "0.12.0",
         date: "2025-12-20",
         changes: [
@@ -222,4 +244,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.12.0";
+export const CURRENT_VERSION = "0.13.1";

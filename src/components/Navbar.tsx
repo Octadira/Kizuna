@@ -20,11 +20,36 @@ export function Navbar() {
     const supabase = createClient();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { isCollapsed, toggleSidebar } = useSidebar();
+    const [userProfile, setUserProfile] = useState<{ name: string | null; email: string | null }>({ name: null, email: null });
+
+    // Fetch user profile
+    useEffect(() => {
+        const fetchUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                setUserProfile({
+                    name: user.user_metadata?.full_name || null,
+                    email: user.email || null
+                });
+            }
+        };
+        fetchUser();
+    }, []);
 
     // Close mobile menu when route changes
     useEffect(() => {
         setIsMobileMenuOpen(false);
     }, [pathname]);
+
+    const getInitials = (name: string) => {
+        if (!name) return "?";
+        return name
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+            .substring(0, 2);
+    };
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
@@ -154,11 +179,32 @@ export function Navbar() {
                 </div>
 
                 <div className="mt-auto pt-4 border-t border-sidebar-border space-y-2 px-3 pb-4">
-                    {!isCollapsed && (
-                        <p className="text-[10px] text-muted-foreground/40 text-center leading-tight mb-2">
-                            Not affiliated with n8n<br />or its parent company.
-                        </p>
-                    )}
+                    {/* User Profile Widget */}
+                    <Link
+                        href="/settings/profile"
+                        className={cn(
+                            "flex items-center gap-3 p-2 rounded-md hover:bg-sidebar-accent mb-2 transition-colors group",
+                            isCollapsed && "md:justify-center md:px-0"
+                        )}
+                        title={userProfile.name || userProfile.email || "Profile"}
+                    >
+                        <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-xs border border-primary/20 shrink-0">
+                            {getInitials(userProfile.name || userProfile.email || "?")}
+                        </div>
+
+                        <div className={cn(
+                            "flex flex-col overflow-hidden transition-all duration-300",
+                            isCollapsed ? "md:w-0 md:opacity-0" : "w-auto opacity-100"
+                        )}>
+                            <span className="text-sm font-medium text-sidebar-foreground truncate">
+                                {userProfile.name || "User"}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground truncate opacity-70 group-hover:opacity-100 transition-opacity">
+                                {userProfile.email}
+                            </span>
+                        </div>
+                    </Link>
+
                     <div className={cn("flex items-center justify-between", isCollapsed ? "md:flex-col md:gap-4" : "")}>
                         <span className={cn("text-xs font-medium text-sidebar-foreground/50", isCollapsed ? "md:hidden" : "block")}>Theme</span>
                         <div className={cn("flex items-center gap-1", isCollapsed ? "md:flex-col" : "")}>

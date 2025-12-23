@@ -34,53 +34,53 @@ export function ServerAnalytics({ executions }: ServerAnalyticsProps) {
         .slice(0, 5);
 
     return (
-        <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
-                <Activity size={20} />
+        <div className="space-y-5">
+            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                <Activity size={18} />
                 Recent Activity (Last {totalExecutions})
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="p-6 bg-card border-border">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 rounded-full bg-blue-500/10 text-blue-500">
-                            <Activity size={24} />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className="p-5 bg-card border-border">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-full bg-blue-500/10 text-blue-500">
+                            <Activity size={20} />
                         </div>
                         <div>
-                            <p className="text-sm text-muted-foreground">Total Executions</p>
-                            <h3 className="text-2xl font-bold text-foreground">{totalExecutions}</h3>
+                            <p className="text-xs text-muted-foreground">Total Executions</p>
+                            <h3 className="text-xl font-bold text-foreground">{totalExecutions}</h3>
                         </div>
                     </div>
                 </Card>
 
-                <Card className="p-6 bg-card border-border">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 rounded-full bg-green-500/10 text-green-500">
-                            <CheckCircle size={24} />
+                <Card className="p-5 bg-card border-border">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-full bg-green-500/10 text-green-500">
+                            <CheckCircle size={20} />
                         </div>
                         <div>
-                            <p className="text-sm text-muted-foreground">Success Rate</p>
-                            <h3 className="text-2xl font-bold text-foreground">{successRate}%</h3>
+                            <p className="text-xs text-muted-foreground">Success Rate</p>
+                            <h3 className="text-xl font-bold text-foreground">{successRate}%</h3>
                         </div>
                     </div>
                 </Card>
 
-                <Card className="p-6 bg-card border-border">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 rounded-full bg-red-500/10 text-red-500">
-                            <AlertCircle size={24} />
+                <Card className="p-5 bg-card border-border">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-full bg-red-500/10 text-red-500">
+                            <AlertCircle size={20} />
                         </div>
                         <div>
-                            <p className="text-sm text-muted-foreground">Failed Executions</p>
-                            <h3 className="text-2xl font-bold text-foreground">{errorCount}</h3>
+                            <p className="text-xs text-muted-foreground">Failed Executions</p>
+                            <h3 className="text-xl font-bold text-foreground">{errorCount}</h3>
                         </div>
                     </div>
                 </Card>
             </div>
 
-            <Card className="p-6 bg-card border-border">
-                <h3 className="text-lg font-medium text-foreground mb-4 flex items-center gap-2">
-                    <AlertCircle size={18} className="text-red-500" />
+            <Card className="p-5 bg-card border-border">
+                <h3 className="text-base font-medium text-foreground mb-3 flex items-center gap-2">
+                    <AlertCircle size={16} className="text-red-500" />
                     Recent Failures
                 </h3>
                 {recentFailures.length > 0 ? (

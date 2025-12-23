@@ -172,7 +172,7 @@ export function WorkflowList({ workflows, serverId, serverUrl, favoriteIds }: Wo
                 </div>
             ) : (
                 <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {paginatedWorkflows.map((workflow) => (
                             <div key={workflow.id} className={cn("transition-opacity duration-300", !workflow.active && activeTab === 'all' ? "opacity-60 grayscale-[0.5] hover:opacity-100 hover:grayscale-0" : "")}>
                                 <WorkflowCard

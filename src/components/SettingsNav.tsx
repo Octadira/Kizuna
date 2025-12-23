@@ -1,18 +1,43 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Puzzle, Github, Settings } from "lucide-react";
+import { Puzzle, Github, Settings, User, Users } from "lucide-react";
 
 
 export function SettingsNav() {
     const pathname = usePathname();
+    const [isAdmin, setIsAdmin] = useState(false);
+    const supabase = createClient();
+
+    useEffect(() => {
+        async function checkAdmin() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data } = await supabase
+                .from('user_roles')
+                .select('role')
+                .eq('user_id', user.id)
+                .single();
+
+            if (data?.role === 'admin') setIsAdmin(true);
+        }
+        checkAdmin();
+    }, []);
 
     const items = [
+        { href: "/settings/profile", label: "My Profile", icon: User },
         { href: "/settings/plugins", label: "Plugins", icon: Puzzle },
         { href: "/settings/github", label: "GitHub Integration", icon: Github },
     ];
+
+    if (isAdmin) {
+        items.push({ href: "/settings/users", label: "User Management", icon: Users });
+    }
 
     return (
         <nav className="flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
