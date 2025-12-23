@@ -6,6 +6,14 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.13.2",
+        date: "2025-12-23",
+        changes: [
+            "Bug Fix: Resolved React hydration mismatch error on User Management page caused by locale date formatting",
+            "Performance: Reduced client-side rendering overhead for date displays"
+        ]
+    },
+    {
         version: "0.13.1",
         date: "2025-12-23",
         changes: [
@@ -244,4 +252,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.13.1";
+export const CURRENT_VERSION = "0.13.2";
