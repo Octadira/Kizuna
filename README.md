@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.13.1-blue.svg)
+![Version](https://img.shields.io/badge/version-0.13.2-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -180,6 +180,10 @@ We welcome contributions to Kizuna! Please follow these guidelines to ensure a s
 ---
 
 ## Changelog
+
+### v0.13.2 (2025-12-23)
+*   **Fix:** Resolved a React hydration mismatch error on the 'User Management' page related to date rendering.
+*   **Maintenance:** Minor performance improvements for date formatting components.
 
 ### v0.13.1 (2025-12-23)
 *   **Config:** Implemented strict **SEO Blocking** (`noindex`, `nofollow`) for production deployments.
