@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.13.2-blue.svg)
+![Version](https://img.shields.io/badge/version-0.14.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -180,6 +180,12 @@ We welcome contributions to Kizuna! Please follow these guidelines to ensure a s
 ---
 
 ## Changelog
+
+### v0.14.0 (2025-12-31)
+*   **Feature:** Added **'Forgot Password'** functionality for secure account recovery.
+*   **Feature:** Added dedicated **'Reset Password'** page with secure token validation.
+*   **UX:** Integrated password recovery link directly on the login page.
+*   **Security:** Added middleware exceptions for unauthenticated password reset flow.
 
 ### v0.13.2 (2025-12-23)
 *   **Fix:** Resolved a React hydration mismatch error on the 'User Management' page related to date rendering.

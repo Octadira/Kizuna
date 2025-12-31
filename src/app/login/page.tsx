@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
 import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 import { CURRENT_VERSION } from "@/lib/changelog";
 
 export default function LoginPage() {
@@ -89,6 +90,14 @@ export default function LoginPage() {
                             >
                                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                             </button>
+                        </div>
+                        <div className="flex justify-end">
+                            <Link
+                                href="/forgot-password"
+                                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                            >
+                                Forgot password?
+                            </Link>
                         </div>
                     </div>
 

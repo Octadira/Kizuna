@@ -6,6 +6,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.14.0",
+        date: "2025-12-31",
+        changes: [
+            "Feature: Added 'Forgot Password' functionality for account recovery",
+            "Feature: Added dedicated 'Reset Password' page with secure token validation",
+            "UX: Integrated password recovery link on the login page",
+            "Security: Added public route exceptions for unauthenticated password reset flow"
+        ]
+    },
+    {
         version: "0.13.2",
         date: "2025-12-23",
         changes: [
@@ -252,4 +262,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.13.2";
+export const CURRENT_VERSION = "0.14.0";
