@@ -6,6 +6,20 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.15.0",
+        date: "2026-01-06",
+        changes: [
+            "Feature: Audit Logging System - All critical user actions are now recorded for security and compliance",
+            "Feature: Activity Log page in Settings - View your action history with filters and pagination",
+            "Feature: Admin users can toggle to view all users' activity logs",
+            "Performance: SWR Caching for server status - Intelligent client-side caching with stale-while-revalidate",
+            "Performance: Automatic cache revalidation when browser tab regains focus",
+            "Performance: Request deduplication - Multiple components requesting same data trigger only one request",
+            "Database: New 'audit_logs' table with RLS policies and performance indexes",
+            "UX: Activity Log shows human-readable action labels with icons and timestamps"
+        ]
+    },
+    {
         version: "0.14.0",
         date: "2025-12-31",
         changes: [
@@ -262,4 +276,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.14.0";
+export const CURRENT_VERSION = "0.15.0";

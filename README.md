@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.13.2-blue.svg)
+![Version](https://img.shields.io/badge/version-0.15.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -55,6 +55,7 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 *   **Plugin System:** Extend functionality with modular plugins.
 *   **Theme Engine:** Choose your vibe with built-in themes (Mint, Classic, Ocean) and Dark/Light mode support.
 *   **Private Notes:** Attach context and documentation directly to your workflows.
+*   **Activity Log:** View your action history with filters, pagination, and admin oversight capabilities.
 
 ---
 
@@ -180,6 +181,15 @@ We welcome contributions to Kizuna! Please follow these guidelines to ensure a s
 ---
 
 ## Changelog
+
+### v0.15.0 (2026-01-06)
+*   **Feature:** Audit Logging System - All critical user actions are now recorded for security and compliance.
+*   **Feature:** Activity Log page in Settings - View your action history with filters, pagination, and human-readable labels.
+*   **Feature:** Admin users can toggle to view all users' activity logs for oversight.
+*   **Performance:** SWR Caching for server status - Intelligent client-side caching with stale-while-revalidate strategy.
+*   **Performance:** Automatic cache revalidation when browser tab regains focus.
+*   **Performance:** Request deduplication - Multiple components requesting same data trigger only one request.
+*   **Database:** New `audit_logs` table with RLS policies and performance indexes (see `setup.sql` Section 6).
 
 ### v0.13.2 (2025-12-23)
 *   **Fix:** Resolved a React hydration mismatch error on the 'User Management' page related to date rendering.

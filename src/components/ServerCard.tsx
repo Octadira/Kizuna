@@ -1,11 +1,12 @@
 "use client";
 
 import { Card } from "@/components/ui/Card";
-import { Activity, Layers, Clock, AlertCircle, Loader2 } from "lucide-react";
+import { Activity, Layers, Clock, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { RefreshServerButton } from "./RefreshServerButton";
+import { useServerStatus } from "@/hooks/useServerStatus";
 
 interface ServerCardProps {
     server: {
@@ -26,39 +27,26 @@ export interface ServerStatus {
 }
 
 export function ServerCard({ server, index = 0 }: ServerCardProps) {
-    const [status, setStatus] = useState<ServerStatus | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    // Use SWR hook for caching and automatic revalidation
+    const { status, isLoading, isValidating, isError, refresh } = useServerStatus(server.id);
     const [latency, setLatency] = useState<number | null>(null);
-    const [error, setError] = useState(false);
+    const startTimeRef = useRef<number>(0);
 
-    const checkStatus = async () => {
-        setIsLoading(true);
-        const startTime = performance.now();
-        try {
-            // Use API route instead of server action for true parallel execution
-            const response = await fetch(`/api/server-status/${server.id}`);
-            const result = await response.json();
-            const endTime = performance.now();
-
-            setStatus(result);
-            setLatency(Math.round(endTime - startTime));
-            setIsLoading(false);
-            setError(false);
-        } catch (e) {
-            console.error("Failed to fetch status", e);
-            setError(true);
-            setStatus({ online: false, workflowCount: 0, activeWorkflowCount: 0 });
-            setIsLoading(false);
-        }
-    };
-
+    // Track latency on initial load
     useEffect(() => {
-        // Each card fetches independently - API routes run in parallel
-        checkStatus();
-    }, [server.id]);
+        startTimeRef.current = performance.now();
+    }, []);
+
+    // Calculate latency when loading completes
+    useEffect(() => {
+        if (!isLoading && startTimeRef.current > 0) {
+            setLatency(Math.round(performance.now() - startTimeRef.current));
+        }
+    }, [isLoading]);
 
     const handleRefresh = () => {
-        checkStatus();
+        startTimeRef.current = performance.now();
+        refresh();
     };
 
     // Use dummy values for layout while loading to prevent layout shift
@@ -80,7 +68,7 @@ export function ServerCard({ server, index = 0 }: ServerCardProps) {
                 {/* 2. Status & Latency Badges (Top Right) */}
                 <div className="absolute top-3 right-3 flex items-center gap-2 z-20">
                     {/* Latency Badge - Only show when loaded */}
-                    {!isLoading && !error && latency !== null && (
+                    {!isLoading && !isError && latency !== null && (
                         <div className="flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-medium border bg-secondary/50 text-secondary-foreground border-border animate-in fade-in slide-in-from-top-2 duration-500">
                             <Clock size={10} />
                             {latency}ms

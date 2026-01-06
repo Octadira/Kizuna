@@ -315,6 +315,58 @@ VALUES
 ON CONFLICT (key) DO NOTHING;
 
 -- ----------------------------------------------------------------
+-- SECTION 6: AUDIT LOGGING
+-- ----------------------------------------------------------------
+-- NOTE: This section adds audit logging capabilities to track user actions.
+-- All critical operations (server CRUD, workflow toggles, backups, etc.) are logged.
+
+-- 6.1 Create 'audit_logs' table
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL, -- Keep logs even if user is deleted
+    action TEXT NOT NULL, -- 'server.create', 'workflow.toggle', 'backup.create', etc.
+    resource_type TEXT NOT NULL, -- 'server', 'workflow', 'backup', 'template', etc.
+    resource_id TEXT, -- UUID or ID of the affected resource
+    metadata JSONB DEFAULT '{}' -- Additional context (e.g., { "name": "My Server", "url": "..." })
+);
+
+-- 6.2 Enable RLS for audit_logs
+ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+
+-- 6.3 Policies for audit_logs
+-- Users can only view their own audit logs
+CREATE POLICY "Users can view their own audit logs"
+ON audit_logs FOR SELECT
+TO authenticated
+USING ((select auth.uid()) = user_id);
+
+-- Users can insert their own audit logs (via application)
+CREATE POLICY "Users can insert their own audit logs"
+ON audit_logs FOR INSERT
+TO authenticated
+WITH CHECK ((select auth.uid()) = user_id);
+
+-- Admins can view all audit logs (for security monitoring)
+CREATE POLICY "Admins can view all audit logs"
+ON audit_logs FOR SELECT
+TO authenticated
+USING (
+    EXISTS (
+        SELECT 1 FROM user_roles 
+        WHERE user_id = (select auth.uid()) 
+        AND role = 'admin'
+    )
+);
+
+-- 6.4 Create indexes for better query performance
+CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON audit_logs(action);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_resource_type ON audit_logs(resource_type);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_resource_id ON audit_logs(resource_id);
+
+-- ----------------------------------------------------------------
 -- SETUP COMPLETE
 -- ----------------------------------------------------------------
 -- All tables, policies, and configurations have been created.

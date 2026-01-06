@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 
 import { validateServerUrl } from "@/lib/security";
 import { validateGithubAccess, pushToGithub } from "@/lib/github";
+import { logAudit } from "@/lib/audit";
 
 export async function addServer(formData: FormData) {
     const supabase = await createClient();
@@ -30,18 +31,26 @@ export async function addServer(formData: FormData) {
     // Encrypt the API Key
     const encryptedKey = encrypt(apiKey);
 
-    const { error } = await supabase.from("servers").insert({
+    const { data: insertedServer, error } = await supabase.from("servers").insert({
         user_id: user.id,
         name,
         url,
         api_key: encryptedKey,
         description,
-    });
+    }).select('id').single();
 
     if (error) {
         console.error("Error adding server:", error);
         throw new Error("Failed to add server");
     }
+
+    // Audit log
+    await logAudit({
+        action: 'server.create',
+        resource_type: 'server',
+        resource_id: insertedServer?.id,
+        metadata: { name, url }
+    });
 
     revalidatePath("/");
     redirect("/");
@@ -59,6 +68,14 @@ export async function toggleFavorite(serverId: string, workflowId: string, workf
             .from("favorites")
             .delete()
             .match({ user_id: user.id, server_id: serverId, workflow_id: workflowId });
+
+        // Audit log
+        await logAudit({
+            action: 'favorite.remove',
+            resource_type: 'favorite',
+            resource_id: workflowId,
+            metadata: { serverId, workflowName }
+        });
     } else {
         // Add to favorites
         await supabase
@@ -69,6 +86,14 @@ export async function toggleFavorite(serverId: string, workflowId: string, workf
                 workflow_id: workflowId,
                 workflow_name: workflowName,
             });
+
+        // Audit log
+        await logAudit({
+            action: 'favorite.add',
+            resource_type: 'favorite',
+            resource_id: workflowId,
+            metadata: { serverId, workflowName }
+        });
     }
 
     revalidatePath(`/servers/${serverId}`);
@@ -93,6 +118,14 @@ export async function toggleWorkflowStatus(serverId: string, workflowId: string,
 
     const apiKey = decrypt(server.api_key);
     await toggleN8nWorkflowActive(server.url, apiKey, workflowId, isActive);
+
+    // Audit log
+    await logAudit({
+        action: 'workflow.toggle_status',
+        resource_type: 'workflow',
+        resource_id: workflowId,
+        metadata: { serverId, newStatus: isActive ? 'active' : 'inactive' }
+    });
 
     revalidatePath(`/servers/${serverId}`);
     revalidatePath(`/servers/${serverId}`);
@@ -164,6 +197,14 @@ export async function saveWorkflowBackup(serverId: string, workflowId: string, w
 
     if (dbError) throw new Error(`Database save failed: ${dbError.message}`);
 
+    // Audit log
+    await logAudit({
+        action: 'workflow.backup_create',
+        resource_type: 'backup',
+        resource_id: fileName,
+        metadata: { serverId, workflowId, workflowName }
+    });
+
     revalidatePath(`/servers/${serverId}/workflows/${workflowId}`);
 }
 
@@ -178,6 +219,14 @@ export async function deleteBackup(backupId: string, storagePath: string, server
 
     // 2. Delete from DB
     await supabase.from("workflow_backups").delete().eq("id", backupId).eq("user_id", user.id);
+
+    // Audit log
+    await logAudit({
+        action: 'workflow.backup_delete',
+        resource_type: 'backup',
+        resource_id: backupId,
+        metadata: { serverId, workflowId, storagePath }
+    });
 
     revalidatePath(`/servers/${serverId}/workflows/${workflowId}`);
 }
@@ -238,6 +287,14 @@ export async function restoreWorkflowVersion(serverId: string, workflowId: strin
     // However, if strictness is high, we might need to be careful. For now, we pass them if they exist.
 
     await updateN8nWorkflow(server.url, apiKey, workflowId, sanitizedData);
+
+    // Audit log
+    await logAudit({
+        action: 'workflow.backup_restore',
+        resource_type: 'workflow',
+        resource_id: workflowId,
+        metadata: { serverId, storagePath }
+    });
 
     revalidatePath(`/servers/${serverId}/workflows/${workflowId}`);
 }
@@ -346,6 +403,15 @@ export async function togglePlugin(pluginId: string, enabled: boolean) {
     }
 
     await supabase.from("plugins").update({ enabled }).eq("id", pluginId);
+
+    // Audit log
+    await logAudit({
+        action: 'plugin.toggle',
+        resource_type: 'plugin',
+        resource_id: pluginId,
+        metadata: { enabled }
+    });
+
     revalidatePath("/settings/plugins");
 }
 
@@ -478,6 +544,13 @@ export async function deleteServer(serverId: string) {
         throw new Error("Failed to delete server");
     }
 
+    // Audit log
+    await logAudit({
+        action: 'server.delete',
+        resource_type: 'server',
+        resource_id: serverId,
+        metadata: { backupsRemoved: backups?.length || 0 }
+    });
 
     revalidatePath("/");
 

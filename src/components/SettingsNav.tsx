@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Puzzle, Github, Settings, User, Users } from "lucide-react";
+import { Puzzle, Github, Settings, User, Users, History } from "lucide-react";
 
 
 export function SettingsNav() {
@@ -31,6 +31,7 @@ export function SettingsNav() {
 
     const items = [
         { href: "/settings/profile", label: "My Profile", icon: User },
+        { href: "/settings/activity", label: "Activity Log", icon: History },
         { href: "/settings/plugins", label: "Plugins", icon: Puzzle },
         { href: "/settings/github", label: "GitHub Integration", icon: Github },
     ];
