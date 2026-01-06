@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/Card";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { CURRENT_VERSION } from "@/lib/changelog";
+import { BRANDING, BrandLogo } from "@/config/branding";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -46,16 +47,12 @@ export default function LoginPage() {
 
             <Card className="w-full max-w-md p-8 relative z-10 border-border bg-card/85 backdrop-blur-xl shadow-2xl">
                 <div className="flex flex-col items-center mb-8">
-                    <div className="logo-container flex items-center justify-center mb-4">
-                        <img
-                            src="/kizuna-logo-sm.webp"
-                            alt="Kizuna Logo"
-                            className="h-11 w-auto"
-                        />
+                    <div className="logo-container flex items-center justify-center mb-4 text-white">
+                        <BrandLogo className="h-11 w-11" />
                     </div>
-                    <h1 className="text-2xl font-bold text-foreground">Welcome to Kizuna</h1>
+                    <h1 className="text-2xl font-bold text-foreground">Welcome to {BRANDING.appName}</h1>
                     <p className="text-muted-foreground mt-2 text-center">
-                        One Kizuna. All your automation.
+                        {BRANDING.tagline}
                     </p>
                 </div>
 

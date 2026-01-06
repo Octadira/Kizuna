@@ -5,15 +5,18 @@ import { GeometricBackground } from "@/components/GeometricBackground";
 
 const inter = Inter({ subsets: ["latin"] });
 
+import { BRANDING } from "@/config/branding";
+
 export const metadata: Metadata = {
-  title: "Kizuna",
-  description: "One Kizuna. All your automation. - Unified n8n Server Manager",
+  title: BRANDING.metadata.title,
+  description: BRANDING.metadata.description,
+  icons: BRANDING.metadata.icons,
   robots: {
     index: false,
     follow: false,
   },
   appleWebApp: {
-    title: "Kizuna",
+    title: BRANDING.appName,
   },
 };
 

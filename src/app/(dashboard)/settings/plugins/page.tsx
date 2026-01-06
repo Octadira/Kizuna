@@ -1,4 +1,5 @@
 import { getPlugins } from "@/app/actions";
+import { BRANDING } from "@/config/branding";
 import { SettingsNav } from "@/components/SettingsNav";
 import { PluginsList } from "@/components/PluginsList";
 
@@ -21,7 +22,7 @@ export default async function PluginsPage() {
                             Plugins & Extensions
                         </h2>
                         <p className="text-sm text-muted-foreground">
-                            Manage additional features and modules for your Kizuna instance.
+                            Manage additional features and modules for your {BRANDING.appName} instance.
                         </p>
                     </div>
 

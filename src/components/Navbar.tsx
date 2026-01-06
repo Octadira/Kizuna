@@ -13,6 +13,7 @@ import { ChangelogModal } from "./ChangelogModal";
 import { CURRENT_VERSION } from "@/lib/changelog";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { useSidebar } from "./SidebarProvider";
+import { BRANDING, BrandLogo } from "@/config/branding";
 
 export function Navbar() {
     const pathname = usePathname();
@@ -68,14 +69,10 @@ export function Navbar() {
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 left-0 right-0 h-16 border-b border-border bg-background/80 backdrop-blur-md z-40 flex items-center justify-between px-4">
                 <div className="flex items-center gap-2">
-                    <div className="logo-container flex items-center justify-center">
-                        <img
-                            src="/kizuna-logo-sm.webp"
-                            alt="Kizuna Logo"
-                            className="h-7 w-auto"
-                        />
+                    <div className="logo-container flex items-center justify-center text-white">
+                        <BrandLogo className="h-7 w-7" />
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-foreground">Kizuna</span>
+                    <span className="text-xl font-bold tracking-tight text-foreground">{BRANDING.appName}</span>
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
                     {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -105,23 +102,15 @@ export function Navbar() {
                         "flex items-center gap-2 overflow-hidden whitespace-nowrap",
                         isCollapsed ? "md:hidden" : "flex"
                     )}>
-                        <div className="logo-container flex items-center justify-center">
-                            <img
-                                src="/kizuna-logo-sm.webp"
-                                alt="Kizuna Logo"
-                                className="h-7 w-auto"
-                            />
+                        <div className="logo-container flex items-center justify-center text-white">
+                            <BrandLogo className="h-7 w-7" />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-sidebar-foreground transition-opacity duration-300">Kizuna</span>
+                        <span className="text-xl font-bold tracking-tight text-sidebar-foreground transition-opacity duration-300">{BRANDING.appName}</span>
                     </div>
 
                     {/* Icon Only Logo - visible only on desktop if collapsed */}
-                    <div className={cn("logo-container hidden", isCollapsed && "md:flex md:items-center md:justify-center")}>
-                        <img
-                            src="/kizuna-logo-sm.webp"
-                            alt="Kizuna Logo"
-                            className="h-7 w-auto"
-                        />
+                    <div className={cn("logo-container hidden text-white", isCollapsed && "md:flex md:items-center md:justify-center")}>
+                        <BrandLogo className="h-7 w-7" />
                     </div>
 
                     {/* Desktop Toggle Button - visible only when NOT collapsed */}
