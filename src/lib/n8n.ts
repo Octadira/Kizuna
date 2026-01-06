@@ -198,16 +198,6 @@ export async function getServerStatus(baseUrl: string, apiKey: string, skipVersi
         };
 
     } catch (error) {
-        // Detailed logging to diagnose connection issues
-        const errorDetails = {
-            url: cleanUrl,
-            errorName: error instanceof Error ? error.name : 'Unknown',
-            errorMessage: error instanceof Error ? error.message : 'Unknown error',
-            isAbortError: error instanceof Error && error.name === 'AbortError',
-            isTimeoutError: error instanceof Error && error.message?.includes('timeout'),
-        };
-        console.error(`[getServerStatus] Failed for ${cleanUrl}:`, JSON.stringify(errorDetails));
-
         return {
             online: false,
             workflowCount: 0,
