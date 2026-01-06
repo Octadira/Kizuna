@@ -148,7 +148,7 @@ export async function getServerStatus(baseUrl: string, apiKey: string, skipVersi
     // Fast workflow check with reduced timeout for better UX
     const workflowPromise = (async () => {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout for faster response
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // Increased to 5s timeout
 
         const res = await fetch(`${cleanUrl}/api/v1/workflows`, {
             headers: {
@@ -160,7 +160,7 @@ export async function getServerStatus(baseUrl: string, apiKey: string, skipVersi
         clearTimeout(timeoutId);
 
         if (!res.ok) {
-            throw new Error(`Failed to fetch workflows: ${res.statusText}`);
+            throw new Error(`Failed to fetch workflows: ${res.status} ${res.statusText}`);
         }
 
         const data = await res.json();
@@ -198,6 +198,16 @@ export async function getServerStatus(baseUrl: string, apiKey: string, skipVersi
         };
 
     } catch (error) {
+        // Detailed logging to diagnose connection issues
+        const errorDetails = {
+            url: cleanUrl,
+            errorName: error instanceof Error ? error.name : 'Unknown',
+            errorMessage: error instanceof Error ? error.message : 'Unknown error',
+            isAbortError: error instanceof Error && error.name === 'AbortError',
+            isTimeoutError: error instanceof Error && error.message?.includes('timeout'),
+        };
+        console.error(`[getServerStatus] Failed for ${cleanUrl}:`, JSON.stringify(errorDetails));
+
         return {
             online: false,
             workflowCount: 0,
