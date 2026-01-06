@@ -23,6 +23,8 @@
 # misc
 .DS_Store
 *.pem
+SECURITY_AUDIT.md
+scratch.md
 
 # debug
 npm-debug.log*
@@ -39,5 +41,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-SECURITY_AUDIT.md
+
 
