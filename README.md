@@ -227,6 +227,19 @@ We welcome contributions to Kizuna! Please follow these guidelines to ensure a s
 
 ## Changelog
 
+### v0.16.0 (2026-02-09)
+*   **Feature:** Server Connection Logs - Comprehensive logging system for all server connection attempts.
+*   **Feature:** Connection log filtering by success/failure, date range, and auto-refresh (30s intervals).
+*   **Feature:** Delete logs functionality with date range filtering and confirmation dialogs.
+*   **Feature:** Global Server Logs page in Settings for cross-server troubleshooting.
+*   **Feature:** Per-server connection logs section on server detail pages.
+*   **Database:** New `server_connection_logs` table with RLS policies and auto-cleanup function (30-day retention).
+*   **Database:** Added DELETE policy for connection logs with ownership verification.
+*   **Security:** Fixed search_path for cleanup function to prevent SQL injection attacks.
+*   **UX:** Color-coded error types (TIMEOUT, NETWORK_ERROR, AUTH_ERROR, etc.) for quick diagnosis.
+*   **UX:** Expandable error details, response time indicators, and pagination support.
+*   **Audit:** Added 'server_logs.delete' action and 'server_connection_logs' resource type for tracking.
+
 ### v0.15.1 (2026-02-09)
 *   **Performance:** Optimized RLS policies for `audit_logs` table - combined multiple permissive SELECT policies into one.
 *   **Database:** Added migration instructions for existing installations (see "Database Migrations" section above).
