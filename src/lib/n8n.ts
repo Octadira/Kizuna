@@ -142,8 +142,14 @@ export async function getN8nVersionInfo(baseUrl: string, apiKey: string): Promis
     return { version, updateAvailable };
 }
 
-export async function getServerStatus(baseUrl: string, apiKey: string, skipVersionCheck: boolean = false): Promise<ServerStatus> {
+export async function getServerStatus(
+    baseUrl: string,
+    apiKey: string,
+    skipVersionCheck: boolean = false,
+    serverId?: string  // Optional serverId for logging
+): Promise<ServerStatus> {
     const cleanUrl = baseUrl.replace(/\/$/, "");
+    const startTime = performance.now();
 
     // Fast workflow check with reduced timeout for better UX
     const workflowPromise = (async () => {
@@ -164,13 +170,27 @@ export async function getServerStatus(baseUrl: string, apiKey: string, skipVersi
         }
 
         const data = await res.json();
-        return data.data as N8nWorkflow[];
+        return { workflows: data.data as N8nWorkflow[], statusCode: res.status };
     })();
 
     try {
         // If skipVersionCheck is true, only fetch workflows (for list view optimization)
         if (skipVersionCheck) {
-            const workflows = await workflowPromise;
+            const { workflows, statusCode } = await workflowPromise;
+
+            // Log successful connection
+            if (serverId) {
+                const { logServerConnection } = await import('@/lib/server-logs');
+                await logServerConnection({
+                    serverId,
+                    endpoint: '/api/v1/workflows',
+                    method: 'GET',
+                    success: true,
+                    statusCode,
+                    responseTimeMs: Math.round(performance.now() - startTime),
+                });
+            }
+
             return {
                 online: true,
                 workflowCount: workflows.length,
@@ -186,8 +206,25 @@ export async function getServerStatus(baseUrl: string, apiKey: string, skipVersi
             throw new Error(workflowsResult.reason);
         }
 
-        const workflows = workflowsResult.value;
+        const { workflows, statusCode } = workflowsResult.value;
         const versionInfo = versionResult.status === 'fulfilled' ? versionResult.value : { version: undefined, updateAvailable: undefined };
+
+        // Log successful connection
+        if (serverId) {
+            const { logServerConnection } = await import('@/lib/server-logs');
+            await logServerConnection({
+                serverId,
+                endpoint: '/api/v1/workflows',
+                method: 'GET',
+                success: true,
+                statusCode,
+                responseTimeMs: Math.round(performance.now() - startTime),
+                metadata: {
+                    workflowCount: workflows.length,
+                    versionDetected: !!versionInfo.version
+                }
+            });
+        }
 
         return {
             online: true,
@@ -198,6 +235,20 @@ export async function getServerStatus(baseUrl: string, apiKey: string, skipVersi
         };
 
     } catch (error) {
+        // Log failed connection
+        if (serverId) {
+            const { logServerConnection, detectErrorType } = await import('@/lib/server-logs');
+            await logServerConnection({
+                serverId,
+                endpoint: '/api/v1/workflows',
+                method: 'GET',
+                success: false,
+                responseTimeMs: Math.round(performance.now() - startTime),
+                errorType: detectErrorType(error),
+                errorMessage: error instanceof Error ? error.message : String(error),
+            });
+        }
+
         return {
             online: false,
             workflowCount: 0,
@@ -205,6 +256,7 @@ export async function getServerStatus(baseUrl: string, apiKey: string, skipVersi
         };
     }
 }
+
 
 export async function getN8nWorkflows(baseUrl: string, apiKey: string, fetchDetails: boolean = false): Promise<N8nWorkflow[]> {
     // Ensure URL doesn't end with slash

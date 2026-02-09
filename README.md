@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.15.1-blue.svg)
+![Version](https://img.shields.io/badge/version-0.16.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -33,6 +33,7 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 *   **Real-Time Analytics:** Track active workflows, execution counts, server latency, and uptime instantly.
 *   **n8n Version Detection:** See the running n8n version and get notified when updates are available.
 *   **Delete Server with Backup:** Safely remove servers with optional backup download.
+*   **Server Connection Logs:** Comprehensive logging of all connection attempts with filtering, error diagnosis, and auto-cleanup (30-day retention).
 
 ### ⚡ Seamless Orchestration
 *   **Collapsible Sidebar:** Smart workspace management with persistent layout preference stored locally in your browser.
@@ -56,6 +57,13 @@ Stop juggling multiple tabs and credentials. With Kizuna, you gain a "single pan
 *   **Theme Engine:** Choose your vibe with built-in themes (Mint, Classic, Ocean) and Dark/Light mode support.
 *   **Private Notes:** Attach context and documentation directly to your workflows.
 *   **Activity Log:** View your action history with filters, pagination, and admin oversight capabilities.
+
+### 🔍 Diagnostics & Troubleshooting
+*   **Connection Logs Dashboard:** Global and per-server views of all connection attempts (successful and failed).
+*   **Smart Error Classification:** Auto-categorized error types (TIMEOUT, NETWORK_ERROR, AUTH_ERROR, SSL_ERROR, etc.).
+*   **Advanced Filtering:** Filter by success/failure, date ranges, with auto-refresh support (30s intervals).
+*   **Delete Logs:** Clean up old logs with date range filtering or bulk deletion with confirmation dialogs.
+*   **Response Time Tracking:** Color-coded performance indicators (green <1s, amber <3s, red >3s).
 
 ---
 

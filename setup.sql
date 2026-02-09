@@ -370,6 +370,102 @@ CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at DE
 CREATE INDEX IF NOT EXISTS idx_audit_logs_resource_id ON audit_logs(resource_id);
 
 -- ----------------------------------------------------------------
+-- SECTION 7: SERVER CONNECTION LOGS
+-- ----------------------------------------------------------------
+-- NOTE: This section adds connection logging to track all server connection
+-- attempts (successful and failed) for troubleshooting connectivity issues.
+
+-- 7.1 Create 'server_connection_logs' table
+CREATE TABLE IF NOT EXISTS server_connection_logs (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    server_id UUID REFERENCES servers(id) ON DELETE CASCADE NOT NULL,
+    
+    -- Connection details
+    endpoint TEXT NOT NULL,           -- e.g., '/api/v1/workflows', '/healthz'
+    method TEXT NOT NULL,             -- e.g., 'GET', 'POST', 'PUT'
+    
+    -- Result
+    success BOOLEAN NOT NULL,
+    status_code INT,                  -- HTTP status code (200, 404, 500, etc.)
+    response_time_ms INT,             -- Latency in milliseconds
+    
+    -- Error details (only for failures)
+    error_type TEXT,                  -- e.g., 'TIMEOUT', 'NETWORK_ERROR', 'AUTH_ERROR'
+    error_message TEXT,
+    
+    -- Additional metadata
+    metadata JSONB DEFAULT '{}'
+);
+
+-- 7.2 Enable RLS for server_connection_logs
+ALTER TABLE server_connection_logs ENABLE ROW LEVEL SECURITY;
+
+-- 7.3 Policies for server_connection_logs
+-- Users can view logs for their own servers
+DROP POLICY IF EXISTS "Users can view logs for their servers" ON server_connection_logs;
+CREATE POLICY "Users can view logs for their servers"
+ON server_connection_logs FOR SELECT
+TO authenticated
+USING (
+    EXISTS (
+        SELECT 1 FROM servers
+        WHERE servers.id = server_connection_logs.server_id
+        AND servers.user_id = (select auth.uid())
+    )
+);
+
+-- Users can insert logs for their own servers
+DROP POLICY IF EXISTS "Users can insert logs for their servers" ON server_connection_logs;
+CREATE POLICY "Users can insert logs for their servers"
+ON server_connection_logs FOR INSERT
+TO authenticated
+WITH CHECK (
+    EXISTS (
+        SELECT 1 FROM servers
+        WHERE servers.id = server_connection_logs.server_id
+        AND servers.user_id = (select auth.uid())
+    )
+);
+
+-- Users can delete logs for their own servers
+DROP POLICY IF EXISTS "Users can delete logs for their servers" ON server_connection_logs;
+CREATE POLICY "Users can delete logs for their servers"
+ON server_connection_logs FOR DELETE
+TO authenticated
+USING (
+    EXISTS (
+        SELECT 1 FROM servers
+        WHERE servers.id = server_connection_logs.server_id
+        AND servers.user_id = (select auth.uid())
+    )
+);
+
+-- 7.4 Create indexes for better query performance
+CREATE INDEX IF NOT EXISTS idx_server_logs_server_id ON server_connection_logs(server_id);
+CREATE INDEX IF NOT EXISTS idx_server_logs_created_at ON server_connection_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_server_logs_success ON server_connection_logs(success);
+CREATE INDEX IF NOT EXISTS idx_server_logs_server_created ON server_connection_logs(server_id, created_at DESC);
+
+-- 7.5 Auto-cleanup function for old logs (30-day retention)
+-- This function will be called periodically to delete logs older than 30 days
+CREATE OR REPLACE FUNCTION cleanup_old_server_logs()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    DELETE FROM server_connection_logs
+    WHERE created_at < NOW() - INTERVAL '30 days';
+END;
+$$;
+
+-- Note: To enable auto-cleanup, you can set up a Supabase Edge Function or pg_cron job
+-- to call this function daily. For manual cleanup, run: SELECT cleanup_old_server_logs();
+
+-- ----------------------------------------------------------------
 -- SETUP COMPLETE
 -- ----------------------------------------------------------------
 -- All tables, policies, and configurations have been created.

@@ -683,7 +683,7 @@ export async function fetchServerStatus(serverId: string, includeVersionInfo: bo
     const apiKey = decrypt(server.api_key);
 
     // Skip version check for list view (default), include it for detail page
-    return await getServerStatus(server.url, apiKey, !includeVersionInfo);
+    return await getServerStatus(server.url, apiKey, !includeVersionInfo, serverId);
 }
 
 export async function refreshServerStatus(serverId: string) {
@@ -707,4 +707,168 @@ export async function refreshServerStatus(serverId: string) {
     // But since `getServerStatus` is called inside an action or component, 
     // we might need `revalidateTag` if we were using tags.
     // For now, revalidatePath is the standard way to clear route cache.
+}
+
+// --- Server Connection Logs Actions ---
+
+export interface ConnectionLog {
+    id: string;
+    created_at: string;
+    server_id: string;
+    endpoint: string;
+    method: string;
+    success: boolean;
+    status_code: number | null;
+    response_time_ms: number;
+    error_type: string | null;
+    error_message: string | null;
+    metadata: Record<string, unknown>;
+}
+
+export interface ConnectionLogsFilters {
+    serverId?: string;
+    success?: boolean;
+    startDate?: string;
+    endDate?: string;
+    page?: number;
+    pageSize?: number;
+}
+
+export async function fetchServerConnectionLogs(filters: ConnectionLogsFilters = {}) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    const pageSize = filters.pageSize || 20;
+    const page = filters.page || 0;
+
+    // Build query - uses RLS to automatically filter by user's servers
+    let query = supabase
+        .from('server_connection_logs')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(page * pageSize, (page + 1) * pageSize - 1);
+
+    // Apply filters
+    if (filters.serverId) {
+        query = query.eq('server_id', filters.serverId);
+    }
+
+    if (filters.success !== undefined) {
+        query = query.eq('success', filters.success);
+    }
+
+    if (filters.startDate) {
+        query = query.gte('created_at', filters.startDate);
+    }
+
+    if (filters.endDate) {
+        query = query.lte('created_at', filters.endDate);
+    }
+
+    const { data, error, count } = await query;
+
+    if (error) {
+        console.error('Error fetching connection logs:', error);
+        throw new Error('Failed to fetch connection logs');
+    }
+
+    return {
+        logs: data as ConnectionLog[],
+        totalCount: count || 0,
+        hasMore: (count || 0) > (page + 1) * pageSize
+    };
+}
+
+/**
+ * Get connection statistics for a server (last 24 hours)
+ */
+export async function getServerConnectionStats(serverId: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+    const { data, error } = await supabase
+        .from('server_connection_logs')
+        .select('success, error_type')
+        .eq('server_id', serverId)
+        .gte('created_at', oneDayAgo);
+
+    if (error) {
+        console.error('Error fetching connection stats:', error);
+        return { totalAttempts: 0, failures: 0, successRate: 100 };
+    }
+
+    const totalAttempts = data.length;
+    const failures = data.filter(log => !log.success).length;
+    const successRate = totalAttempts > 0 ? Math.round(((totalAttempts - failures) / totalAttempts) * 100) : 100;
+
+    return { totalAttempts, failures, successRate };
+}
+
+/**
+ * Delete connection logs for a server within a date range
+ */
+export async function deleteServerConnectionLogs(serverId: string, startDate?: string, endDate?: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    // Verify user owns the server (RLS will also check, but explicit check for better UX)
+    const { data: server } = await supabase
+        .from('servers')
+        .select('id')
+        .eq('id', serverId)
+        .eq('user_id', user.id)
+        .single();
+
+    if (!server) throw new Error("Server not found or access denied");
+
+    // Build delete query
+    let query = supabase
+        .from('server_connection_logs')
+        .delete()
+        .eq('server_id', serverId);
+
+    // Apply date filters if provided
+    if (startDate) {
+        query = query.gte('created_at', startDate);
+    }
+
+    if (endDate) {
+        query = query.lte('created_at', endDate);
+    }
+
+    const { error, count } = await query;
+
+    if (error) {
+        console.error('Error deleting connection logs:', error);
+        throw new Error('Failed to delete connection logs');
+    }
+
+    // Audit log
+    await logAudit({
+        action: 'server_logs.delete',
+        resource_type: 'server_connection_logs',
+        resource_id: serverId,
+        metadata: {
+            startDate,
+            endDate,
+            deletedCount: count || 0
+        }
+    });
+
+    return { deletedCount: count || 0 };
+}
+
+/**
+ * Delete ALL connection logs for a server
+ */
+export async function deleteAllServerConnectionLogs(serverId: string) {
+    return deleteServerConnectionLogs(serverId); // No date filters = delete all
 }

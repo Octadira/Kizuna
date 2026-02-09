@@ -6,6 +6,23 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.16.0",
+        date: "2026-02-09",
+        changes: [
+            "Feature: Server Connection Logs - Comprehensive logging system for all server connection attempts",
+            "Feature: Connection log filtering by success/failure, date range, and auto-refresh (30s)",
+            "Feature: Delete logs functionality with date range filtering and confirmation dialogs",
+            "Feature: Global Server Logs page in Settings for cross-server troubleshooting",
+            "Feature: Per-server connection logs section on server detail pages",
+            "Database: New 'server_connection_logs' table with RLS policies and auto-cleanup function (30-day retention)",
+            "Database: Added DELETE policy for connection logs with ownership verification",
+            "Security: Fixed search_path for cleanup function to prevent SQL injection attacks",
+            "UX: Color-coded error types (TIMEOUT, NETWORK_ERROR, AUTH_ERROR, etc.) for quick diagnosis",
+            "UX: Expandable error details, response time indicators, and pagination support",
+            "Audit: Added 'server_logs.delete' action and 'server_connection_logs' resource type for tracking"
+        ]
+    },
+    {
         version: "0.15.1",
         date: "2026-02-09",
         changes: [
@@ -285,4 +302,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.15.1";
+export const CURRENT_VERSION = "0.16.0";

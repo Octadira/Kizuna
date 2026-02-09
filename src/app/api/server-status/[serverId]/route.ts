@@ -29,8 +29,8 @@ export async function GET(
 
         const apiKey = decrypt(server.api_key);
 
-        // Skip version check for fast loading (true = skip)
-        const status = await getServerStatus(server.url, apiKey, true);
+        // Skip version check for fast loading (true = skip), pass serverId for logging
+        const status = await getServerStatus(server.url, apiKey, true, serverId);
 
         return NextResponse.json(status);
     } catch (error) {

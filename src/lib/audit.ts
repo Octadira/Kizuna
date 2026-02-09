@@ -31,7 +31,9 @@ export type AuditAction =
     | 'github.connect'
     | 'github.disconnect'
     // Admin actions
-    | 'admin.user_role_update';
+    | 'admin.user_role_update'
+    // Server logs actions
+    | 'server_logs.delete';
 
 export type ResourceType =
     | 'server'
@@ -41,7 +43,8 @@ export type ResourceType =
     | 'favorite'
     | 'plugin'
     | 'github_integration'
-    | 'user';
+    | 'user'
+    | 'server_connection_logs';
 
 export interface AuditLogEntry {
     action: AuditAction;

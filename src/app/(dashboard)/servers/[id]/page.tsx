@@ -3,12 +3,13 @@ import { decrypt } from "@/utils/encryption";
 import { getN8nWorkflows, getExecutions, getN8nVersionInfo } from "@/lib/n8n";
 import { WorkflowList } from "@/components/WorkflowList";
 import { Button } from "@/components/ui/Button";
-import { ArrowLeft, ExternalLink, Layers, Activity } from "lucide-react";
+import { ArrowLeft, ExternalLink, Layers, Activity, Terminal } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ServerAnalytics } from "@/components/ServerAnalytics";
 import { DeleteServerButton } from "@/components/DeleteServerButton";
 import { RefreshServerButton } from "@/components/RefreshServerButton";
+import { ServerConnectionLogs } from "@/components/ServerConnectionLogs";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -130,9 +131,23 @@ export default async function ServerPage({ params }: PageProps) {
             </div>
 
             {error ? (
-                <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500">
-                    <p className="font-medium">Failed to connect to server</p>
-                    <p className="text-sm mt-2 opacity-80">Error: {error}</p>
+                <div className="space-y-4">
+                    <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500">
+                        <p className="font-medium">Failed to connect to server</p>
+                        <p className="text-sm mt-2 opacity-80">Error: {error}</p>
+                    </div>
+
+                    {/* Show Connection Logs when there's an error */}
+                    <div className="bg-card border border-border rounded-lg p-6">
+                        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                            <Terminal size={18} />
+                            Connection Logs
+                        </h2>
+                        <p className="text-sm text-muted-foreground mb-4">
+                            Check recent connection attempts to troubleshoot this issue.
+                        </p>
+                        <ServerConnectionLogs serverId={server.id} />
+                    </div>
                 </div>
             ) : (
                 <div className="space-y-8">
@@ -153,6 +168,11 @@ export default async function ServerPage({ params }: PageProps) {
                             serverUrl={server.url}
                             favoriteIds={favoriteIds}
                         />
+                    </div>
+
+                    {/* Connection Logs Section */}
+                    <div className="bg-card border border-border rounded-lg p-6">
+                        <ServerConnectionLogs serverId={server.id} />
                     </div>
                 </div>
             )}
