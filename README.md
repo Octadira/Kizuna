@@ -1,6 +1,6 @@
 # Kizuna - One Kizuna. All your automation.
 
-![Version](https://img.shields.io/badge/version-0.15.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.15.1-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Security Rating](https://img.shields.io/badge/security-9.2%2F10-brightgreen)
@@ -145,6 +145,43 @@ Once you have the code (via Release or Git):
 
 ---
 
+## Database Migrations (For Existing Installations)
+
+If you already have a running Kizuna instance and are updating to a newer version, you may need to apply database migrations. These migrations are **safe** and do not delete any data.
+
+### v0.15.1 - RLS Policy Optimization
+
+This migration combines multiple permissive SELECT policies on `audit_logs` into a single optimized policy for better query performance.
+
+**Run in Supabase SQL Editor:**
+```sql
+-- Drop old policies (safe - only removes security rules, not data)
+DROP POLICY IF EXISTS "Users can view their own audit logs" ON audit_logs;
+DROP POLICY IF EXISTS "Admins can view all audit logs" ON audit_logs;
+
+-- Create optimized combined policy
+CREATE POLICY "Users and admins can view audit logs"
+ON audit_logs FOR SELECT
+TO authenticated
+USING (
+    (select auth.uid()) = user_id
+    OR
+    EXISTS (
+        SELECT 1 FROM user_roles 
+        WHERE user_id = (select auth.uid()) 
+        AND role = 'admin'
+    )
+);
+```
+
+**Verify the migration:**
+```sql
+SELECT policyname, cmd FROM pg_policies WHERE tablename = 'audit_logs';
+```
+You should see only `Users and admins can view audit logs` for SELECT (instead of two separate policies).
+
+---
+
 ## Known Issues
 
 ### Archived Workflows Not Detected
@@ -181,6 +218,11 @@ We welcome contributions to Kizuna! Please follow these guidelines to ensure a s
 ---
 
 ## Changelog
+
+### v0.15.1 (2026-02-09)
+*   **Performance:** Optimized RLS policies for `audit_logs` table - combined multiple permissive SELECT policies into one.
+*   **Database:** Added migration instructions for existing installations (see "Database Migrations" section above).
+*   **Maintenance:** Improved `setup.sql` with `DROP POLICY` statements for cleaner re-runs.
 
 ### v0.15.0 (2026-01-06)
 *   **Feature:** Audit Logging System - All critical user actions are now recorded for security and compliance.

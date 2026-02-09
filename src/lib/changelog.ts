@@ -6,6 +6,15 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.15.1",
+        date: "2026-02-09",
+        changes: [
+            "Performance: Optimized RLS policies for audit_logs table - combined multiple permissive SELECT policies into one",
+            "Database: Added migration instructions for existing installations in README",
+            "Maintenance: Improved setup.sql with DROP POLICY statements for cleaner re-runs"
+        ]
+    },
+    {
         version: "0.15.0",
         date: "2026-01-06",
         changes: [
@@ -276,4 +285,4 @@ export const changelog: ChangelogEntry[] = [
     }
 ];
 
-export const CURRENT_VERSION = "0.15.0";
+export const CURRENT_VERSION = "0.15.1";

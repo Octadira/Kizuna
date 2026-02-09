@@ -335,29 +335,32 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 
 -- 6.3 Policies for audit_logs
--- Users can only view their own audit logs
-CREATE POLICY "Users can view their own audit logs"
-ON audit_logs FOR SELECT
-TO authenticated
-USING ((select auth.uid()) = user_id);
+-- Drop existing policies to ensure clean state
+DROP POLICY IF EXISTS "Users can view their own audit logs" ON audit_logs;
+DROP POLICY IF EXISTS "Admins can view all audit logs" ON audit_logs;
+DROP POLICY IF EXISTS "Users can insert their own audit logs" ON audit_logs;
+DROP POLICY IF EXISTS "Users and admins can view audit logs" ON audit_logs;
 
--- Users can insert their own audit logs (via application)
-CREATE POLICY "Users can insert their own audit logs"
-ON audit_logs FOR INSERT
-TO authenticated
-WITH CHECK ((select auth.uid()) = user_id);
-
--- Admins can view all audit logs (for security monitoring)
-CREATE POLICY "Admins can view all audit logs"
+-- Combined SELECT policy: Users see their own logs, Admins see all logs
+-- Using a single policy with OR improves performance over multiple permissive policies
+CREATE POLICY "Users and admins can view audit logs"
 ON audit_logs FOR SELECT
 TO authenticated
 USING (
+    (select auth.uid()) = user_id
+    OR
     EXISTS (
         SELECT 1 FROM user_roles 
         WHERE user_id = (select auth.uid()) 
         AND role = 'admin'
     )
 );
+
+-- Users can insert their own audit logs (via application)
+CREATE POLICY "Users can insert their own audit logs"
+ON audit_logs FOR INSERT
+TO authenticated
+WITH CHECK ((select auth.uid()) = user_id);
 
 -- 6.4 Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
